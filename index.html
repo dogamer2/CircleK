@@ -767,7 +767,7 @@
     window.loadMoneySaved = function() {
       try {
         // Try to get from Cloudflare API first
-        fetch('https://circlek-api.your-subdomain.workers.dev/api/money-saved')
+        fetch('https://circlek.amongustest2020.workers.dev/api/money-saved')
           .then(response => response.json())
           .then(data => {
             if (data.totalSaved !== undefined) {
@@ -1215,7 +1215,7 @@ ${redemptionDetails.length > 0 ? redemptionDetails.join('\n') : 'No redemptions 
       localStorage.setItem('lastStatusChange', new Date().toISOString());
       
       // Try to update via API
-      fetch('https://circlek-api.your-subdomain.workers.dev/api/status', {
+      fetch('https://circlek.amongustest2020.workers.dev/api/bugs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
