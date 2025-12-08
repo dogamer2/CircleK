@@ -184,6 +184,455 @@
       line-height:1.5;
     }
 
+    .money-saved{
+      text-align:center;
+      margin-bottom:32px;
+      padding:24px;
+      background:linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.15));
+      border-radius:24px;
+      backdrop-filter:blur(15px);
+      border:2px solid rgba(255,255,255,0.4);
+      box-shadow:0 12px 30px rgba(0,0,0,0.2);
+      animation:pulse 2s infinite;
+    }
+
+    @keyframes pulse{
+      0%,100%{transform:scale(1);}
+      50%{transform:scale(1.02);}
+    }
+
+    @keyframes slideIn{
+      from{transform:translateX(100%); opacity:0;}
+      to{transform:translateX(0); opacity:1;}
+    }
+
+    .saved-title{
+      font-size:16px;
+      font-weight:600;
+      opacity:0.9;
+      margin-bottom:8px;
+    }
+
+    .saved-amount{
+      font-size:42px;
+      font-weight:900;
+      background:linear-gradient(45deg, #fff, #ffd700);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      text-shadow:0 4px 12px rgba(255,215,0,0.3);
+      position:relative;
+    }
+
+    .refresh-btn{
+      position:absolute;
+      top:50%;
+      right:20px;
+      transform:translateY(-50%);
+      background:rgba(255,255,255,0.2);
+      border:2px solid rgba(255,255,255,0.3);
+      color:#fff;
+      width:36px;
+      height:36px;
+      border-radius:18px;
+      font-size:18px;
+      font-weight:700;
+      cursor:pointer;
+      backdrop-filter:blur(5px);
+      transition:all 0.3s ease;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .refresh-btn:hover{
+      background:rgba(255,255,255,0.3);
+      transform:translateY(-50%) rotate(180deg);
+    }
+
+    .disclaimer{
+      text-align:center;
+      color:rgba(255,255,255,0.8);
+      font-size:12px;
+      font-weight:600;
+      margin:16px auto;
+      padding:8px 16px;
+      background:rgba(255,193,7,0.1);
+      border:1px solid rgba(255,193,7,0.3);
+      border-radius:12px;
+      backdrop-filter:blur(5px);
+      max-width:400px;
+    }
+
+    .version-button{
+      text-align:center;
+      margin-bottom:24px;
+    }
+
+    .version-btn{
+      background:rgba(255,255,255,0.2);
+      color:#fff;
+      border:2px solid rgba(255,255,255,0.3);
+      padding:12px 24px;
+      border-radius:20px;
+      font-size:16px;
+      font-weight:600;
+      cursor:pointer;
+      backdrop-filter:blur(5px);
+      transition:all 0.3s ease;
+    }
+
+    .version-btn:hover{
+      background:rgba(255,255,255,0.3);
+      transform:translateY(-2px);
+    }
+
+    .action-buttons{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      margin-bottom:24px;
+    }
+
+    .reset-btn{
+      background:rgba(255,59,48,0.2);
+      color:#fff;
+      border:2px solid rgba(255,59,48,0.4);
+      padding:12px 24px;
+      border-radius:20px;
+      font-size:16px;
+      font-weight:600;
+      cursor:pointer;
+      backdrop-filter:blur(5px);
+      transition:all 0.3s ease;
+    }
+
+    .debug-btn{
+      background:rgba(52,199,89,0.2);
+      color:#fff;
+      border:2px solid rgba(52,199,89,0.4);
+      padding:12px 24px;
+      border-radius:20px;
+      font-size:16px;
+      font-weight:600;
+      cursor:pointer;
+      backdrop-filter:blur(5px);
+      transition:all 0.3s ease;
+    }
+
+    .debug-btn:hover{
+      background:rgba(52,199,89,0.3);
+      transform:translateY(-2px);
+    }
+
+    .report-btn{
+      background:rgba(255,149,0,0.2);
+      color:#fff;
+      border:2px solid rgba(255,149,0,0.4);
+      padding:12px 24px;
+      border-radius:20px;
+      font-size:16px;
+      font-weight:600;
+      cursor:pointer;
+      backdrop-filter:blur(5px);
+      transition:all 0.3s ease;
+    }
+
+    .report-btn:hover{
+      background:rgba(255,149,0,0.3);
+      transform:translateY(-2px);
+    }
+
+    .version-modal{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      background:rgba(0,0,0,0.8);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:1000;
+    }
+
+    .version-content{
+      background:linear-gradient(135deg, #667eea, #764ba2);
+      border-radius:20px;
+      padding:30px;
+      max-width:500px;
+      max-height:80vh;
+      overflow-y:auto;
+      border:2px solid rgba(255,255,255,0.3);
+      box-shadow:0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    .version-title{
+      color:#fff;
+      font-size:24px;
+      font-weight:800;
+      text-align:center;
+      margin-bottom:20px;
+    }
+
+    .version-text{
+      color:#fff;
+      font-family:monospace;
+      white-space:pre-line;
+      line-height:1.6;
+      font-size:14px;
+    }
+
+    .close-modal{
+      background:rgba(255,255,255,0.2);
+      border:2px solid rgba(255,255,255,0.3);
+      color:#fff;
+      padding:10px 20px;
+      border-radius:10px;
+      cursor:pointer;
+      margin-top:20px;
+      font-weight:600;
+      width:100%;
+    }
+
+    .close-modal:hover{
+      background:rgba(255,255,255,0.3);
+    }
+
+    .report-modal{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      background:rgba(0,0,0,0.8);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:1000;
+    }
+
+    .report-content{
+      background:linear-gradient(135deg, #667eea, #764ba2);
+      border-radius:20px;
+      padding:30px;
+      max-width:500px;
+      width:90%;
+      border:2px solid rgba(255,255,255,0.3);
+      box-shadow:0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    .report-title{
+      color:#fff;
+      font-size:24px;
+      font-weight:800;
+      text-align:center;
+      margin-bottom:20px;
+    }
+
+    .report-form{
+      display:flex;
+      flex-direction:column;
+      gap:15px;
+    }
+
+    .report-input, .report-textarea{
+      background:rgba(255,255,255,0.1);
+      border:2px solid rgba(255,255,255,0.3);
+      border-radius:10px;
+      padding:12px;
+      color:#fff;
+      font-size:16px;
+      font-family:inherit;
+    }
+
+    .report-input::placeholder, .report-textarea::placeholder{
+      color:rgba(255,255,255,0.6);
+    }
+
+    .report-textarea{
+      min-height:120px;
+      resize:vertical;
+    }
+
+    .report-submit{
+      background:linear-gradient(135deg, #4CAF50, #45a049);
+      border:none;
+      border-radius:10px;
+      padding:15px;
+      color:#fff;
+      font-size:18px;
+      font-weight:700;
+      cursor:pointer;
+      transition:all 0.3s ease;
+    }
+
+    .report-submit:hover{
+      transform:translateY(-2px);
+      box-shadow:0 10px 20px rgba(76,175,80,0.3);
+    }
+
+    .bug-reports-section{
+      position:fixed;
+      top:20px;
+      left:20px;
+      z-index:100;
+    }
+
+    .bug-reports-btn{
+      background:rgba(255,149,0,0.2);
+      color:#fff;
+      border:2px solid rgba(255,149,0,0.4);
+      padding:8px 16px;
+      border-radius:12px;
+      font-size:14px;
+      font-weight:600;
+      cursor:pointer;
+      backdrop-filter:blur(5px);
+      transition:all 0.3s ease;
+    }
+
+    .bug-reports-btn:hover{
+      background:rgba(255,149,0,0.3);
+      transform:translateY(-2px);
+    }
+
+    .bug-reports-display{
+      position:fixed;
+      top:60px;
+      left:20px;
+      width:400px;
+      max-height:500px;
+      background:linear-gradient(135deg, #667eea, #764ba2);
+      border-radius:16px;
+      border:2px solid rgba(255,255,255,0.3);
+      box-shadow:0 20px 40px rgba(0,0,0,0.3);
+      z-index:101;
+      overflow-y:auto;
+    }
+
+    .bug-reports-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:16px 20px;
+      border-bottom:1px solid rgba(255,255,255,0.2);
+    }
+
+    .bug-reports-header h3{
+      color:#fff;
+      margin:0;
+      font-size:18px;
+      font-weight:700;
+    }
+
+    .close-bug-reports{
+      background:rgba(255,255,255,0.2);
+      border:2px solid rgba(255,255,255,0.3);
+      color:#fff;
+      width:30px;
+      height:30px;
+      border-radius:15px;
+      font-size:16px;
+      font-weight:700;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .close-bug-reports:hover{
+      background:rgba(255,255,255,0.3);
+    }
+
+    .bug-reports-list{
+      padding:20px;
+      color:#fff;
+    }
+
+    .bug-report-item{
+      background:rgba(255,255,255,0.1);
+      border-radius:12px;
+      padding:16px;
+      margin-bottom:12px;
+      border:1px solid rgba(255,255,255,0.2);
+    }
+
+    .bug-report-header{
+      font-weight:700;
+      margin-bottom:8px;
+      color:#ffd700;
+    }
+
+    .bug-report-meta{
+      font-size:12px;
+      opacity:0.8;
+      margin-bottom:8px;
+    }
+
+    .bug-report-description{
+      line-height:1.5;
+      font-size:14px;
+    }
+
+    .no-bug-reports{
+      text-align:center;
+      color:rgba(255,255,255,0.7);
+      font-style:italic;
+      padding:20px;
+    }
+
+    .status-btn{
+      background:rgba(255,255,255,0.2);
+      color:#fff;
+      border:2px solid rgba(255,255,255,0.3);
+      padding:8px 16px;
+      border-radius:12px;
+      font-size:14px;
+      font-weight:600;
+      cursor:pointer;
+      backdrop-filter:blur(5px);
+      transition:all 0.3s ease;
+      margin-left:8px;
+    }
+
+    .status-btn:hover{
+      background:rgba(255,255,255,0.3);
+      transform:translateY(-2px);
+    }
+
+    .not-working-btn{
+      background:rgba(244,67,54,0.2);
+      border-color:rgba(244,67,54,0.4);
+    }
+
+    .not-working-btn:hover{
+      background:rgba(244,67,54,0.3);
+    }
+
+    .working-btn{
+      background:rgba(76,175,80,0.2);
+      border-color:rgba(76,175,80,0.4);
+    }
+
+    .working-btn:hover{
+      background:rgba(76,175,80,0.3);
+    }
+
+    .status-info{
+      text-align:center;
+      color:#fff;
+      font-size:16px;
+      font-weight:800;
+      margin-bottom:24px;
+      padding:16px;
+      background:linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
+      border-radius:20px;
+      backdrop-filter:blur(10px);
+      border:2px solid rgba(255,255,255,0.3);
+      box-shadow:0 8px 20px rgba(0,0,0,0.2);
+    }
+
     @media (max-width:640px){
       .title{
         font-size:36px;
@@ -218,6 +667,41 @@
   <div class="container">
     <h1 class="title">Tool Selector</h1>
     <p class="subtitle">Choose your tool to get started</p>
+    
+    <div class="status-info">
+      Circle K working as of December 8th, 2025 | Version 1.0
+    </div>
+
+    <div class="bug-reports-section">
+      <button onclick="viewBugReports()" class="bug-reports-btn">🐛 View Bug Reports</button>
+      <button onclick="reportNotWorking()" class="status-btn not-working-btn">Report Not Working</button>
+      <button onclick="reportWorking()" class="status-btn working-btn">Report Working</button>
+      <div id="bugReportsDisplay" class="bug-reports-display" style="display: none;">
+        <div class="bug-reports-header">
+          <h3>🐛 Bug Reports</h3>
+          <button onclick="closeBugReports()" class="close-bug-reports">×</button>
+        </div>
+        <div id="bugReportsList" class="bug-reports-list">
+          <!-- Bug reports will be displayed here -->
+        </div>
+      </div>
+    </div>
+
+    <div class="money-saved">
+      <div class="saved-title">Total Money Saved</div>
+      <div class="saved-amount" id="savedAmount">$0.00</div>
+      <button onclick="loadMoneySaved()" class="refresh-btn" title="Refresh money counter">↻</button>
+    </div>
+
+    <div class="action-buttons">
+      <button onclick="showVersionHistory()" class="version-btn">Version History</button>
+      <button onclick="debugLocalStorage()" class="debug-btn">Debug</button>
+      <button onclick="showReportForm()" class="report-btn">Report Bug</button>
+    </div>
+    
+    <div class="disclaimer">
+      ⚠️ To avoid false totals, please only fully redeem at checkout
+    </div>
     
     <div class="tools">
       <div class="tool-card circlek-card" onclick="window.location.href='circlek.html'">
@@ -258,7 +742,56 @@
     </div>
   </div>
 
-  <script>
+<script>
+    // Prices data embedded directly
+    const prices = {
+      chips: 1.99,
+      candy: 3.29,
+      alani: 3.99,
+      arizona: 2.19,
+      froster: 1.69
+    };
+
+    // SINGLE CLEAN RESET FUNCTION
+    window.resetmoney = function() {
+      localStorage.clear();
+      const savedAmountEl = document.getElementById('savedAmount');
+      if (savedAmountEl) {
+        savedAmountEl.textContent = '$0.00';
+      }
+      alert('Money reset to $0.00 successfully!');
+      return 'Money reset successfully';
+    };
+
+    // Load prices and track redeemed items (global function)
+    window.loadMoneySaved = function() {
+      try {
+        // Get redeemed items from localStorage
+        const redeemedItems = JSON.parse(localStorage.getItem('redeemedItems') || '[]');
+        
+        let totalSaved = 0;
+        // Count each redemption separately
+        Object.keys(prices).forEach(product => {
+          const redemptionCount = parseInt(localStorage.getItem(`redemptionCount_${product}`) || '0');
+          if (redemptionCount > 0) {
+            totalSaved += prices[product] * redemptionCount;
+          }
+        });
+        
+        document.getElementById('savedAmount').textContent = `$${totalSaved.toFixed(2)}`;
+        console.log('Money updated:', totalSaved, 'Redeemed items:', redeemedItems);
+      } catch (error) {
+        console.error('Error loading prices:', error);
+        document.getElementById('savedAmount').textContent = `$0.00`;
+      }
+    }
+
+    // Show total potential value
+    window.showTotalValue = function() {
+      const totalValue = Object.values(prices).reduce((sum, price) => sum + price, 0);
+      document.getElementById('savedAmount').textContent = `$${totalValue.toFixed(2)}`;
+    }
+
     // Add some interactive effects
     document.addEventListener('DOMContentLoaded', function() {
       const cards = document.querySelectorAll('.tool-card');
@@ -272,7 +805,382 @@
           this.style.transform = 'translateY(0) scale(1)';
         });
       });
+
+      // Load actual redeemed money (replaces total value display)
+      loadMoneySaved();
+      
+      // Initialize working status
+      checkDailyStatus();
     });
+
+    // Listen for messages from fullyredeem.html to update counter in real-time
+    window.addEventListener('message', function(event) {
+      if (event.data.type === 'itemRedeemed') {
+        loadMoneySaved(); // Refreshes money counter
+      }
+    });
+
+    window.showVersionHistory = function() {
+      console.log('Version history button clicked');
+      
+      // Create modal
+      const modal = document.createElement('div');
+      modal.className = 'version-modal';
+      modal.innerHTML = `
+        <div class="version-content">
+          <div class="version-title">📋 VERSION HISTORY</div>
+          <div class="version-text">╔══════════════════════════════════════╗
+║         VERSION HISTORY               ║
+╚══════════════════════════════════════╝
+
+🔥 v1.0 - December 8th, 2025
+├─ Initial release
+├─ Circle K tool working
+├─ Money saved counter added
+├─ Version history feature added
+└─ Basic redemption system
+
+📝 v0.9 - December 7th, 2025  
+├─ Beta testing phase
+├─ UI improvements
+└─ Bug fixes
+
+🔧 v0.8 - December 6th, 2025
+├─ Development build
+├─ Core functionality added
+└─ Initial product cards
+
+🎯 v0.5 - December 5th, 2025
+├─ Alpha release
+├─ Basic layout
+└─ Concept testing</div>
+          <button class="close-modal" onclick="this.parentElement.parentElement.remove()">Close</button>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+      
+      // Close on background click
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          modal.remove();
+        }
+      });
+    }
+
+    window.debugLocalStorage = function() {
+      const redeemedItems = JSON.parse(localStorage.getItem('redeemedItems') || '[]');
+      const totalValue = Object.values(prices).reduce((sum, price) => sum + price, 0);
+      let redeemedValue = 0;
+      let redemptionDetails = [];
+      
+      Object.keys(prices).forEach(product => {
+        const count = parseInt(localStorage.getItem(`redemptionCount_${product}`) || '0');
+        if (count > 0) {
+          const value = prices[product] * count;
+          redeemedValue += value;
+          redemptionDetails.push(`${product}: ${count}x = $${value.toFixed(2)}`);
+        }
+      });
+      
+      const debugInfo = `
+DEBUG INFO:
+═════════════════════════════════
+Total Available Value: $${totalValue.toFixed(2)}
+Redeemed Items: ${redeemedItems.length > 0 ? redeemedItems.join(', ') : 'None'}
+Redeemed Value: $${redeemedValue.toFixed(2)}
+
+Redemption Details:
+${redemptionDetails.length > 0 ? redemptionDetails.join('\n') : 'No redemptions yet'}
+═════════════════════════════════
+      `;
+      alert(debugInfo);
+      console.log('Debug info:', { redeemedItems, totalValue, redeemedValue, redemptionDetails });
+    }
+
+    // Show report form
+    window.showReportForm = function() {
+      console.log('Report form opened');
+      
+      const modal = document.createElement('div');
+      modal.className = 'report-modal';
+      modal.innerHTML = `
+        <div class="report-content">
+          <div class="report-title">🐛 Report Bug/Issue</div>
+          <form class="report-form" onsubmit="submitReport(event)">
+            <input type="text" class="report-input" placeholder="Your Name (optional)" id="reportName">
+            <input type="text" class="report-input" placeholder="Bug Type (e.g., Barcode, UI, Feature)" id="reportType" required>
+            <textarea class="report-textarea" placeholder="Describe the issue in detail..." id="reportDescription" required></textarea>
+            <button type="submit" class="report-submit">Submit Report</button>
+          </form>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+      
+      // Close on background click
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          modal.remove();
+        }
+      });
+    };
+
+    // Submit report
+    window.submitReport = function(event) {
+      event.preventDefault();
+      
+      const name = document.getElementById('reportName').value || 'Anonymous';
+      const type = document.getElementById('reportType').value;
+      const description = document.getElementById('reportDescription').value;
+      
+      const report = {
+        timestamp: new Date().toISOString(),
+        name: name,
+        type: type,
+        description: description
+      };
+      
+      // Save to localStorage
+      const existingReports = JSON.parse(localStorage.getItem('bugReports') || '[]');
+      existingReports.push(report);
+      localStorage.setItem('bugReports', JSON.stringify(existingReports));
+      
+      console.log('Report submitted:', report);
+      console.log('All reports:', existingReports);
+      
+      // Show confirmation
+      const confirmMsg = document.createElement('div');
+      confirmMsg.textContent = '✓ Report submitted successfully!';
+      confirmMsg.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #4CAF50;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        z-index: 1001;
+        animation: slideIn 0.3s ease;
+      `;
+      document.body.appendChild(confirmMsg);
+      
+      setTimeout(() => {
+        if (confirmMsg.parentNode) {
+          confirmMsg.remove();
+        }
+      }, 3000);
+      
+      // Close modal
+      document.querySelector('.report-modal').remove();
+      
+      // Update bug reports display if it's open
+      if (document.getElementById('bugReportsDisplay').style.display !== 'none') {
+        displayBugReports();
+      }
+    };
+
+    // Export bugs to downloadable file
+    window.exportBugs = function() {
+      const reports = JSON.parse(localStorage.getItem('bugReports') || '[]');
+      
+      if (reports.length === 0) {
+        alert('No bug reports to export!');
+        return;
+      }
+      
+      // Format as bugs.data content
+      let bugsDataContent = '';
+      reports.forEach((report, index) => {
+        bugsDataContent += `Bug Report #${index + 1}\n`;
+        bugsDataContent += `================\n`;
+        bugsDataContent += `Timestamp: ${report.timestamp}\n`;
+        bugsDataContent += `Name: ${report.name}\n`;
+        bugsDataContent += `Type: ${report.type}\n`;
+        bugsDataContent += `Description: ${report.description}\n`;
+        bugsDataContent += `================\n\n`;
+      });
+      
+      // Create downloadable file
+      const blob = new Blob([bugsDataContent], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'bugs.data';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      console.log('bugs.data file exported successfully!');
+      console.log('Content:', bugsDataContent);
+    };
+
+    // View bug reports in UI
+    window.viewBugReports = function() {
+      const display = document.getElementById('bugReportsDisplay');
+      display.style.display = display.style.display === 'none' ? 'block' : 'none';
+      
+      if (display.style.display === 'block') {
+        displayBugReports();
+      }
+    };
+
+    // Close bug reports display
+    window.closeBugReports = function() {
+      document.getElementById('bugReportsDisplay').style.display = 'none';
+    };
+
+    // Display bug reports in the UI
+    window.displayBugReports = function() {
+      const reports = JSON.parse(localStorage.getItem('bugReports') || '[]');
+      const listContainer = document.getElementById('bugReportsList');
+      
+      if (reports.length === 0) {
+        listContainer.innerHTML = '<div class="no-bug-reports">No bug reports yet. Submit your first bug report!</div>';
+      } else {
+        listContainer.innerHTML = reports.map((report, index) => `
+          <div class="bug-report-item">
+            <div class="bug-report-header">Bug #${index + 1}: ${report.type}</div>
+            <div class="bug-report-meta">
+              By: ${report.name} | ${new Date(report.timestamp).toLocaleString()}
+            </div>
+            <div class="bug-report-description">${report.description}</div>
+          </div>
+        `).join('');
+      }
+    };
+
+    // Console command to view all bugs
+    window.viewBugs = function() {
+      const reports = JSON.parse(localStorage.getItem('bugReports') || '[]');
+      console.log('All Bug Reports:');
+      console.table(reports);
+      
+      if (reports.length === 0) {
+        console.log('No bug reports found.');
+      } else {
+        console.log('Total reports:', reports.length);
+      }
+    };
+
+    // Console command to clear all bugs
+    window.clearBugs = function() {
+      if (confirm('Are you sure you want to clear all bug reports? This cannot be undone.')) {
+        localStorage.removeItem('bugReports');
+        console.log('All bug reports cleared.');
+      }
+    };
+
+    // Test function to verify resetmoney is available
+    window.testReset = function() {
+      console.log('resetmoney function exists:', typeof window.resetmoney);
+      console.log('resetMoney function exists:', typeof window.resetMoney);
+      console.log('Current money display:', document.getElementById('savedAmount').textContent);
+      console.log('localStorage redeemedItems:', localStorage.getItem('redeemedItems'));
+      console.log('Available window functions:', Object.keys(window).filter(key => key.includes('reset')));
+    };
+  </script>
+
+<!-- WORKING STATUS SYSTEM -->
+<script>
+  // WORKING STATUS SYSTEM
+    window.updateWorkingStatus = function() {
+      const today = new Date();
+      const dateString = today.toLocaleDateString('en-US', { 
+        month: 'long', 
+        day: 'numeric', 
+        year: 'numeric' 
+      });
+      
+      const statusEl = document.querySelector('.status-info');
+      const isWorking = localStorage.getItem('circleKWorking') !== 'false';
+      
+      if (isWorking) {
+        statusEl.textContent = `Circle K working as of ${dateString} | Version 1.0`;
+      } else {
+        statusEl.textContent = `Circle K may not be working as of ${dateString} | Version 1.0`;
+      }
+    };
+
+    // Report not working
+    window.reportNotWorking = function() {
+      localStorage.setItem('circleKWorking', 'false');
+      localStorage.setItem('lastStatusChange', new Date().toISOString());
+      updateWorkingStatus();
+      
+      // Show confirmation
+      const msg = document.createElement('div');
+      msg.textContent = '✓ Status updated to "may not be working"';
+      msg.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #f44336;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        z-index: 1001;
+        animation: slideIn 0.3s ease;
+      `;
+      document.body.appendChild(msg);
+      
+      setTimeout(() => {
+        if (msg.parentNode) {
+          msg.remove();
+        }
+      }, 3000);
+    };
+
+    // Report working
+    window.reportWorking = function() {
+      localStorage.setItem('circleKWorking', 'true');
+      localStorage.setItem('lastStatusChange', new Date().toISOString());
+      updateWorkingStatus();
+      
+      // Show confirmation
+      const msg = document.createElement('div');
+      msg.textContent = '✓ Status updated to "working"';
+      msg.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #4CAF50;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        z-index: 1001;
+        animation: slideIn 0.3s ease;
+      `;
+      document.body.appendChild(msg);
+      
+      setTimeout(() => {
+        if (msg.parentNode) {
+          msg.remove();
+        }
+      }, 3000);
+    };
+
+    // Auto-update status daily
+    window.checkDailyStatus = function() {
+      const lastChange = localStorage.getItem('lastStatusChange');
+      const today = new Date().toDateString();
+      
+      if (lastChange) {
+        const lastChangeDate = new Date(lastChange).toDateString();
+        if (lastChangeDate !== today) {
+          // New day, reset to working by default
+          localStorage.setItem('circleKWorking', 'true');
+          localStorage.setItem('lastStatusChange', new Date().toISOString());
+        }
+      }
+      
+      updateWorkingStatus();
+    };
+
   </script>
 </body>
 </html>
