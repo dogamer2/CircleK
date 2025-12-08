@@ -1,4 +1,4 @@
-name = "circlek-api"
+name = "circlek"
 main = "worker.js"
 compatibility_date = "2024-07-18"
 
