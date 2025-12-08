@@ -2,6 +2,31 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    // CORS support
+    const corsHeaders = {
+      "Access-Control-Allow-Origin": "*", // or "https://tryastra.xyz"
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type"
+    };
+
+    // Handle OPTIONS (CORS preflight)
+    if (request.method === "OPTIONS") {
+      return new Response(null, {
+        status: 204,
+        headers: corsHeaders
+      });
+    }
+
+    // Helper to respond with CORS headers
+    const respond = (data, status = 200) =>
+      new Response(JSON.stringify(data), {
+        status,
+        headers: {
+          "Content-Type": "application/json",
+          ...corsHeaders
+        }
+      });
+
     // -----------------------------
     // GET TOTAL MONEY SAVED
     // -----------------------------
@@ -21,7 +46,7 @@ export default {
         total += (prices[item] || 0) * redeemed[item];
       }
 
-      return Response.json({
+      return respond({
         totalSaved: total,
         redeemedItems: redeemed
       });
@@ -31,21 +56,21 @@ export default {
     // SAVE A BUG REPORT
     // -----------------------------
     if (url.pathname === "/api/bugs" && request.method === "POST") {
-      const report = await request.json();
-      const allReports = await env.BUGS.get("all", { type: "json" }) || [];
+      const body = await request.json();
+      const existing = await env.BUGS.get("all", { type: "json" }) || [];
 
-      allReports.push(report);
-      await env.BUGS.put("all", JSON.stringify(allReports));
+      existing.push(body);
+      await env.BUGS.put("all", JSON.stringify(existing));
 
-      return Response.json({ success: true, report });
+      return respond({ success: true, saved: body });
     }
 
     // -----------------------------
     // GET ALL BUG REPORTS
     // -----------------------------
     if (url.pathname === "/api/bugs") {
-      const allReports = await env.BUGS.get("all", { type: "json" }) || [];
-      return Response.json(allReports);
+      const reports = await env.BUGS.get("all", { type: "json" }) || [];
+      return respond(reports);
     }
 
     // -----------------------------
@@ -55,7 +80,7 @@ export default {
       const body = await request.json();
       await env.STATUS.put("current", JSON.stringify(body));
 
-      return Response.json({ success: true, status: body });
+      return respond({ success: true, status: body });
     }
 
     // -----------------------------
@@ -66,10 +91,13 @@ export default {
         status: "working",
         timestamp: new Date().toISOString()
       };
-      return Response.json(status);
+      return respond(status);
     }
 
     // DEFAULT RESPONSE
-    return new Response("CircleK API — Online", { status: 200 });
+    return new Response("CircleK API — Online", { 
+      status: 200,
+      headers: corsHeaders
+    });
   }
 };
