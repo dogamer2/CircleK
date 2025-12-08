@@ -4,15 +4,15 @@ compatibility_date = "2024-07-18"
 
 [[kv_namespaces]]
 binding = "REDEEMED"
-id = "redeemed_items"
+id = "061cf56f0c9a4004b154c851146dacec"
 
 [[kv_namespaces]]
 binding = "BUGS"
-id = "bug_reports"
+id = "4f410c265c7a4e3da7452aa45d40a0f3"
 
 [[kv_namespaces]]
 binding = "STATUS"
-id = "working_status"
+id = "313ff41199064b089bbfa6cee445cc25"
 
 [vars]
 # No environment variables needed
