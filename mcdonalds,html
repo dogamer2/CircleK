@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>McDonald's Rewards</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --red:#da291c;
+      --yellow:#ffc72c;
+      --deep-red:#c41e3a;
+      --gold:#ffb700;
+    }
+    *{box-sizing:border-box;}
+    html,body{margin:0;padding:0;min-height:100%;}
+    body{
+      font-family:'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background:linear-gradient(135deg, #da291c 0%, #ffc72c 100%);
+      color:#fff;
+      -webkit-font-smoothing:antialiased;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      min-height:100vh;
+      padding:20px;
+    }
+    body::before{
+      content:'';
+      position:fixed;
+      inset:0;
+      background:
+        radial-gradient(10px 10px at 20% 30%, rgba(255,255,255,0.18), transparent 60%),
+        radial-gradient(12px 12px at 70% 22%, rgba(255,255,255,0.2), transparent 60%),
+        radial-gradient(8px 8px at 40% 55%, rgba(255,255,255,0.12), transparent 60%);
+      opacity:0.4;
+      pointer-events:none;
+      z-index:0;
+    }
+
+    .container{
+      width:100%;
+      max-width:600px;
+      position:relative;
+      z-index:1;
+      text-align:center;
+    }
+
+    .title{
+      font-size:48px;
+      font-weight:800;
+      margin-bottom:24px;
+      background:linear-gradient(45deg, #fff, #fff);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      text-shadow:0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .subtitle{
+      font-size:20px;
+      font-weight:600;
+      margin-bottom:40px;
+      opacity:0.9;
+    }
+
+    .deals-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
+      gap:20px;
+      margin-bottom:40px;
+    }
+
+    .deal-card{
+      background:rgba(255,255,255,0.15);
+      backdrop-filter:blur(10px);
+      border-radius:20px;
+      padding:24px;
+      border:2px solid rgba(255,255,255,0.3);
+      transition:all 0.3s ease;
+      cursor:pointer;
+    }
+
+    .deal-card:hover{
+      transform:translateY(-4px);
+      box-shadow:0 20px 40px rgba(0,0,0,0.3);
+      background:rgba(255,255,255,0.25);
+    }
+
+    .deal-icon{
+      font-size:48px;
+      margin-bottom:16px;
+    }
+
+    .deal-title{
+      font-size:20px;
+      font-weight:700;
+      margin-bottom:12px;
+      color:#fff;
+    }
+
+    .deal-description{
+      font-size:14px;
+      opacity:0.9;
+      line-height:1.5;
+      margin-bottom:16px;
+    }
+
+    .deal-badge{
+      display:inline-block;
+      background:var(--yellow);
+      color:var(--red);
+      padding:6px 12px;
+      border-radius:20px;
+      font-size:12px;
+      font-weight:700;
+      margin-bottom:12px;
+    }
+
+    .redeem-btn{
+      background:var(--red);
+      color:#fff;
+      border:2px solid #fff;
+      padding:12px 24px;
+      border-radius:25px;
+      font-weight:700;
+      font-size:14px;
+      cursor:pointer;
+      transition:all 0.3s ease;
+      text-decoration:none;
+      display:inline-block;
+    }
+
+    .redeem-btn:hover{
+      background:var(--deep-red);
+      transform:scale(1.05);
+      box-shadow:0 8px 16px rgba(0,0,0,0.2);
+    }
+
+    .back-btn{
+      display:inline-block;
+      background:rgba(255,255,255,0.2);
+      color:#fff;
+      text-decoration:none;
+      padding:16px 32px;
+      border-radius:30px;
+      font-weight:700;
+      font-size:18px;
+      border:2px solid rgba(255,255,255,0.3);
+      backdrop-filter:blur(10px);
+      transition:all 0.3s ease;
+    }
+
+    .back-btn:hover{
+      background:rgba(255,255,255,0.3);
+      transform:translateY(-2px);
+      box-shadow:0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    .mcdonalds-logo{
+      width:80px;
+      height:80px;
+      background:var(--yellow);
+      border-radius:50%;
+      margin:0 auto 20px auto;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:48px;
+      font-weight:900;
+      color:var(--red);
+      box-shadow:0 8px 16px rgba(0,0,0,0.2);
+    }
+
+    @media (max-width:640px){
+      .title{
+        font-size:36px;
+      }
+      
+      .subtitle{
+        font-size:18px;
+      }
+      
+      .deals-grid{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="mcdonalds-logo">M</div>
+    <h1 class="title">McDonald's Rewards</h1>
+    <p class="subtitle">Free meals and exclusive deals</p>
+    
+    <div class="deals-grid">
+      <div class="deal-card">
+        <div class="deal-badge">FREE</div>
+        <div class="deal-icon">🍔</div>
+        <div class="deal-title">Big Mac</div>
+        <div class="deal-description">
+          Get a free Big Mac with any purchase. The iconic burger you love.
+        </div>
+        <a href="#" class="redeem-btn" onclick="alert('Deal redeemed! Show this code at checkout: BIGMAC2024')">REDEEM</a>
+      </div>
+      
+      <div class="deal-card">
+        <div class="deal-badge">FREE</div>
+        <div class="deal-icon">🍟</div>
+        <div class="deal-title">Large Fries</div>
+        <div class="deal-description">
+          Free large fries with any meal. Golden and crispy every time.
+        </div>
+        <a href="#" class="redeem-btn" onclick="alert('Deal redeemed! Show this code at checkout: FRIES2024')">REDEEM</a>
+      </div>
+      
+      <div class="deal-card">
+        <div class="deal-badge">BOGO</div>
+        <div class="deal-icon">🥤</div>
+        <div class="deal-title">Free Drink</div>
+        <div class="deal-description">
+          Buy one drink, get one free. Any size, any flavor.
+        </div>
+        <a href="#" class="redeem-btn" onclick="alert('Deal redeemed! Show this code at checkout: DRINK2024')">REDEEM</a>
+      </div>
+      
+      <div class="deal-card">
+        <div class="deal-badge">50% OFF</div>
+        <div class="deal-icon">🍗</div>
+        <div class="deal-title">McNuggets</div>
+        <div class="deal-description">
+          50% off 10-piece McNuggets. Tender, juicy chicken.
+        </div>
+        <a href="#" class="redeem-btn" onclick="alert('Deal redeemed! Show this code at checkout: NUGGETS2024')">REDEEM</a>
+      </div>
+      
+      <div class="deal-card">
+        <div class="deal-badge">FREE</div>
+        <div class="deal-icon">🍦</div>
+        <div class="deal-title">McFlurry</div>
+        <div class="deal-description">
+          Free McFlurry with any meal. Creamy, delicious dessert.
+        </div>
+        <a href="#" class="redeem-btn" onclick="alert('Deal redeemed! Show this code at checkout: MCFLURRY2024')">REDEEM</a>
+      </div>
+      
+      <div class="deal-card">
+        <div class="deal-badge">FREE</div>
+        <div class="deal-icon">🌅</div>
+        <div class="deal-title">Hash Browns</div>
+        <div class="deal-description">
+          Free hash browns with any breakfast purchase. Crispy and golden.
+        </div>
+        <a href="#" class="redeem-btn" onclick="alert('Deal redeemed! Show this code at checkout: HASHBROWN2024')">REDEEM</a>
+      </div>
+    </div>
+
+    <a href="index.html" class="back-btn">← Back to Selector</a>
+  </div>
+
+  <script>
+    // Add some interactive effects
+    document.addEventListener('DOMContentLoaded', function() {
+      const cards = document.querySelectorAll('.deal-card');
+      
+      cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.style.animation = 'fadeInUp 0.6s ease forwards';
+      });
+    });
+
+    // Add fadeInUp animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>
