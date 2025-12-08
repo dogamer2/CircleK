@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="en">
-<script src="circlek.js"></script>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -745,13 +744,6 @@
 
 <script>
     // Prices data embedded directly
-    const prices = {
-      chips: 1.99,
-      candy: 3.29,
-      alani: 3.99,
-      arizona: 2.19,
-      froster: 1.69
-    };
 
     // SINGLE CLEAN RESET FUNCTION
     window.resetmoney = function() {
@@ -768,7 +760,7 @@
     window.loadMoneySaved = function() {
       try {
         // Try to get from Cloudflare API first
-        fetch('https://circlek.amongustest2020.workers.dev/api/money-saved')
+        fetch('https://circlek-api.your-subdomain.workers.dev/api/money-saved')
           .then(response => response.json())
           .then(data => {
             if (data.totalSaved !== undefined) {
@@ -956,7 +948,7 @@ ${redemptionDetails.length > 0 ? redemptionDetails.join('\n') : 'No redemptions 
       };
       
       // Try to submit to API first
-      fetch('https://circlek.amongustest2020.workers.dev/api/bugs', {
+      fetch('https://circlek-api.your-subdomain.workers.dev/api/bugs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(report)
@@ -1167,7 +1159,7 @@ ${redemptionDetails.length > 0 ? redemptionDetails.join('\n') : 'No redemptions 
       localStorage.setItem('lastStatusChange', new Date().toISOString());
       
       // Try to update via API
-      fetch('https://circlek.amongustest2020.workers.dev/api/status', {
+      fetch('https://circlek-api.your-subdomain.workers.dev/api/status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -1216,7 +1208,7 @@ ${redemptionDetails.length > 0 ? redemptionDetails.join('\n') : 'No redemptions 
       localStorage.setItem('lastStatusChange', new Date().toISOString());
       
       // Try to update via API
-      fetch('https://circlek.amongustest2020.workers.dev/api/bugs', {
+      fetch('https://circlek-api.your-subdomain.workers.dev/api/status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -1274,8 +1266,6 @@ ${redemptionDetails.length > 0 ? redemptionDetails.join('\n') : 'No redemptions 
       
       updateWorkingStatus();
     };
-
-
 
   </script>
 </body>
