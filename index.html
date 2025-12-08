@@ -766,20 +766,33 @@
     // Load prices and track redeemed items (global function)
     window.loadMoneySaved = function() {
       try {
-        // Get redeemed items from localStorage
-        const redeemedItems = JSON.parse(localStorage.getItem('redeemedItems') || '[]');
-        
-        let totalSaved = 0;
-        // Count each redemption separately
-        Object.keys(prices).forEach(product => {
-          const redemptionCount = parseInt(localStorage.getItem(`redemptionCount_${product}`) || '0');
-          if (redemptionCount > 0) {
-            totalSaved += prices[product] * redemptionCount;
-          }
-        });
-        
-        document.getElementById('savedAmount').textContent = `$${totalSaved.toFixed(2)}`;
-        console.log('Money updated:', totalSaved, 'Redeemed items:', redeemedItems);
+        // Try to get from Cloudflare API first
+        fetch('https://circlek-api.your-subdomain.workers.dev/api/money-saved')
+          .then(response => response.json())
+          .then(data => {
+            if (data.totalSaved !== undefined) {
+              document.getElementById('savedAmount').textContent = `$${data.totalSaved.toFixed(2)}`;
+              console.log('Money updated from API:', data.totalSaved, 'Redeemed items:', data.redeemedItems);
+              return;
+            }
+          })
+          .catch(error => {
+            console.log('API not available, using localStorage:', error);
+            // Fallback to localStorage
+            const redeemedItems = JSON.parse(localStorage.getItem('redeemedItems') || '[]');
+            
+            let totalSaved = 0;
+            // Count each redemption separately
+            Object.keys(prices).forEach(product => {
+              const redemptionCount = parseInt(localStorage.getItem(`redemptionCount_${product}`) || '0');
+              if (redemptionCount > 0) {
+                totalSaved += prices[product] * redemptionCount;
+              }
+            });
+            
+            document.getElementById('savedAmount').textContent = `$${totalSaved.toFixed(2)}`;
+            console.log('Money updated from localStorage:', totalSaved, 'Redeemed items:', redeemedItems);
+          });
       } catch (error) {
         console.error('Error loading prices:', error);
         document.getElementById('savedAmount').textContent = `$0.00`;
@@ -941,44 +954,86 @@ ${redemptionDetails.length > 0 ? redemptionDetails.join('\n') : 'No redemptions 
         description: description
       };
       
-      // Save to localStorage
-      const existingReports = JSON.parse(localStorage.getItem('bugReports') || '[]');
-      existingReports.push(report);
-      localStorage.setItem('bugReports', JSON.stringify(existingReports));
-      
-      console.log('Report submitted:', report);
-      console.log('All reports:', existingReports);
-      
-      // Show confirmation
-      const confirmMsg = document.createElement('div');
-      confirmMsg.textContent = '✓ Report submitted successfully!';
-      confirmMsg.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #4CAF50;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 8px;
-        font-weight: 600;
-        z-index: 1001;
-        animation: slideIn 0.3s ease;
-      `;
-      document.body.appendChild(confirmMsg);
-      
-      setTimeout(() => {
-        if (confirmMsg.parentNode) {
-          confirmMsg.remove();
+      // Try to submit to API first
+      fetch('https://circlek-api.your-subdomain.workers.dev/api/bugs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(report)
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Report submitted to API:', data);
+        
+        // Show confirmation
+        const confirmMsg = document.createElement('div');
+        confirmMsg.textContent = '✓ Report submitted to cloud!';
+        confirmMsg.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: #4CAF50;
+          color: white;
+          padding: 12px 20px;
+          border-radius: 8px;
+          font-weight: 600;
+          z-index: 1001;
+          animation: slideIn 0.3s ease;
+        `;
+        document.body.appendChild(confirmMsg);
+        
+        setTimeout(() => {
+          if (confirmMsg.parentNode) {
+            confirmMsg.remove();
+          }
+        }, 3000);
+        
+        // Close modal
+        document.querySelector('.report-modal').remove();
+        
+        // Update bug reports display if it's open
+        if (document.getElementById('bugReportsDisplay').style.display !== 'none') {
+          displayBugReports();
         }
-      }, 3000);
-      
-      // Close modal
-      document.querySelector('.report-modal').remove();
-      
-      // Update bug reports display if it's open
-      if (document.getElementById('bugReportsDisplay').style.display !== 'none') {
-        displayBugReports();
-      }
+      })
+      .catch(error => {
+        console.log('API not available, using localStorage:', error);
+        
+        // Fallback to localStorage
+        const existingReports = JSON.parse(localStorage.getItem('bugReports') || '[]');
+        existingReports.push(report);
+        localStorage.setItem('bugReports', JSON.stringify(existingReports));
+        
+        // Show confirmation
+        const confirmMsg = document.createElement('div');
+        confirmMsg.textContent = '✓ Report saved locally!';
+        confirmMsg.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: #ff9800;
+          color: white;
+          padding: 12px 20px;
+          border-radius: 8px;
+          font-weight: 600;
+          z-index: 1001;
+          animation: slideIn 0.3s ease;
+        `;
+        document.body.appendChild(confirmMsg);
+        
+        setTimeout(() => {
+          if (confirmMsg.parentNode) {
+            confirmMsg.remove();
+          }
+        }, 3000);
+        
+        // Close modal
+        document.querySelector('.report-modal').remove();
+        
+        // Update bug reports display if it's open
+        if (document.getElementById('bugReportsDisplay').style.display !== 'none') {
+          displayBugReports();
+        }
+      });
     };
 
     // Export bugs to downloadable file
@@ -1106,9 +1161,28 @@ ${redemptionDetails.length > 0 ? redemptionDetails.join('\n') : 'No redemptions 
 
     // Report not working
     window.reportNotWorking = function() {
+      // Update localStorage
       localStorage.setItem('circleKWorking', 'false');
       localStorage.setItem('lastStatusChange', new Date().toISOString());
-      updateWorkingStatus();
+      
+      // Try to update via API
+      fetch('https://circlek-api.your-subdomain.workers.dev/api/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: 'not_working',
+          timestamp: new Date().toISOString()
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Status updated via API:', data);
+        updateWorkingStatus();
+      })
+      .catch(error => {
+        console.log('API not available, using localStorage:', error);
+        updateWorkingStatus();
+      });
       
       // Show confirmation
       const msg = document.createElement('div');
@@ -1136,9 +1210,28 @@ ${redemptionDetails.length > 0 ? redemptionDetails.join('\n') : 'No redemptions 
 
     // Report working
     window.reportWorking = function() {
+      // Update localStorage
       localStorage.setItem('circleKWorking', 'true');
       localStorage.setItem('lastStatusChange', new Date().toISOString());
-      updateWorkingStatus();
+      
+      // Try to update via API
+      fetch('https://circlek-api.your-subdomain.workers.dev/api/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: 'working',
+          timestamp: new Date().toISOString()
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Status updated via API:', data);
+        updateWorkingStatus();
+      })
+      .catch(error => {
+        console.log('API not available, using localStorage:', error);
+        updateWorkingStatus();
+      });
       
       // Show confirmation
       const msg = document.createElement('div');
