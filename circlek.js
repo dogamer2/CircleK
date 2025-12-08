@@ -1,7 +1,7 @@
 const savedAmountEl = document.getElementById('savedAmount');
 
 async function loadMoneySaved() {
-const apiUrl = '[https://circlek-api.amongustest2020.workers.dev/api/money-saved](https://circlek-api.amongustest2020.workers.dev/api/money-saved)'; // <-- replace with your Worker subdomain
+const apiUrl = '[https://circlek.amongustest2020.workers.dev/api/money-saved](https://circlek.amongustest2020.workers.dev/api/money-saved)'; // <-- replace with your Worker subdomain
 
 // Define prices here to be accessible in fallback
 const prices = {
