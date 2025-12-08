@@ -2,10 +2,11 @@ const savedAmountEl = document.getElementById('savedAmount');
 
 async function loadMoneySaved() {
 try {
-const response = await fetch('[https://circlek-api](https://circlek-api).<your-subdomain>.workers.dev/api/money-saved', {
-method: 'GET',
-headers: { 'Content-Type': 'application/json' },
+const response = await fetch('https://circlek.amongustest2020.workers.dev/api/money-saved', {
+  method: 'GET',
+  headers: { 'Content-Type': 'application/json' },
 });
+
 
 ```
 if (!response.ok) throw new Error(`API error: ${response.status}`);
