@@ -1,0 +1,13 @@
+{
+  "name": "circlek-wallet",
+  "version": "1.0.0",
+  "description": "Circle K Wallet Application",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python3 -m http.server 8000",
+    "start": "python3 -m http.server 8000"
+  },
+  "keywords": ["circlek", "wallet", "coupons"],
+  "author": "",
+  "license": "ISC"
+}

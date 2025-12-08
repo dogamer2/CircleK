@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redeem Prize</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --red:#b81618;
+      --deep-red:#8f0e12;
+      --card:#f5ebe2;
+      --pill:linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.06));
+    }
+    *{box-sizing:border-box;}
+    html,body{margin:0;padding:0;height:100%;}
+    body{
+      font-family:'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background:radial-gradient(120% 120% at 50% 20%, #c8252b 0%, #a61215 45%, #8d0b11 100%);
+      color:#fff;
+      -webkit-font-smoothing:antialiased;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      min-height:100vh;
+      position:relative;
+      overflow-x:hidden;
+    }
+    /* soft snow dots */
+    .snow{position:absolute;inset:0;pointer-events:none;opacity:0.22;}
+    .snow span{position:absolute;width:6px;height:6px;background:rgba(255,255,255,0.55);border-radius:50%;filter:blur(1px);}
+    .snow span:nth-child(1){top:22%;left:28%;}
+    .snow span:nth-child(2){top:36%;left:42%;width:4px;height:4px;}
+    .snow span:nth-child(3){top:44%;left:16%;width:3px;height:3px;}
+    .snow span:nth-child(4){top:18%;left:72%;width:5px;height:5px;}
+    .snow span:nth-child(5){top:52%;left:78%;width:4px;height:4px;}
+
+    /* header */
+    header{
+      width:100%;
+      padding:14px 16px 4px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      gap:10px;
+    }
+
+    .logo{display:flex;align-items:center;justify-content:center;}
+    .logo img{width:44px;height:auto;object-fit:contain;filter:brightness(0) invert(1);}
+
+    /* close bubble */
+    .close-btn{
+      position:absolute;
+      left:16px;
+      top:14px;
+      width:44px;
+      height:44px;
+      border-radius:22px;
+      background:rgba(255,255,255,0.12);
+      border:1px solid rgba(0,0,0,0.05);
+      color:#f7f0ed;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:22px;
+      font-weight:700;
+      text-decoration:none;
+      box-shadow:0 10px 28px rgba(0,0,0,0.32);
+      backdrop-filter:blur(3px);
+      z-index:3;
+      cursor:pointer;
+    }
+
+    /* main hero */
+    main{
+      width:100%;
+      display:flex;
+      justify-content:center;
+    }
+    .hero{
+      width:92%;
+      max-width:480px;
+      margin-top:4px;
+      padding:20px 12px 34px 12px;
+      text-align:center;
+      position:relative;
+      overflow:visible;
+    }
+    .plate{
+      position:relative;
+      background:linear-gradient(180deg,#c22027,#a30f13);
+      border-radius:32px;
+      padding:28px 12px 32px 12px;
+      box-shadow:0 14px 34px rgba(0,0,0,0.32);
+    }
+    .plate::before{
+      content:'';
+      position:absolute;
+      left:-30px;
+      top:34%;
+      width:118px;
+      height:118px;
+      border-radius:59px;
+      background:inherit;
+      z-index:-1;
+      box-shadow:inset 0 0 0 6px rgba(255,255,255,0.22);
+    }
+    .plate::after{
+      content:'';
+      position:absolute;
+      right:-30px;
+      top:34%;
+      width:118px;
+      height:118px;
+      border-radius:59px;
+      background:inherit;
+      z-index:-1;
+      box-shadow:inset 0 0 0 6px rgba(255,255,255,0.22);
+    }
+    .plate::after{
+      content:'';
+      position:absolute;
+      inset:0;
+      border-radius:32px;
+      box-shadow:inset 0 12px 26px rgba(0,0,0,0.18);
+      pointer-events:none;
+    }
+    .product-title{font-size:28px;font-weight:800;margin-top:6px;}
+    .product-sub{font-size:15px;font-weight:700;margin-top:2px;color:#f8f4f2;}
+
+    .scene{
+      margin-top:22px;
+      position:relative;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:8px;
+    }
+    .badge-left,.badge-right{
+      position:absolute;
+      top:34%;
+      width:118px;
+      height:118px;
+      border-radius:59px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 12px 26px rgba(0,0,0,0.24);
+      z-index:2;
+    }
+    .badge-left{
+      left:-30px;
+      background:radial-gradient(circle at 30% 30%, #d8363f, #8e0f13);
+    }
+    .badge-right{
+      right:-30px;
+      background:radial-gradient(circle at 30% 30%, #3cff86, #0dcf5b);
+    }
+    .badge-icon{width:46px;height:46px;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.3));}
+    .platform{
+      width:240px;
+      height:90px;
+      background:radial-gradient(120% 100% at 50% 0%, #f3e6da 0%, #e0cfc0 70%, #d4c0b0 100%);
+      border-radius:44px;
+      box-shadow:0 18px 38px rgba(0,0,0,0.25), inset 0 8px 22px rgba(255,255,255,0.6);
+      transform:perspective(800px) rotateX(32deg);
+    }
+    .trees{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 28px;
+      pointer-events:none;
+    }
+    .tree{width:48px;height:88px;background:linear-gradient(180deg,#a21a1e,#7f0f14);border-radius:28px 28px 12px 12px;filter:drop-shadow(0 10px 16px rgba(0,0,0,0.24));transform:translateY(10px);}
+    .tree.small{width:30px;height:64px;opacity:0.9;}
+    .product-img{
+      width:240px;
+      max-width:82%;
+      filter:drop-shadow(0 16px 30px rgba(0,0,0,0.35));
+      position:relative;
+      z-index:2;
+    }
+
+    /* expires */
+    .expires{font-size:22px;font-weight:800;margin-top:16px;letter-spacing:0.8px;}
+    .countdown{display:flex;justify-content:center;gap:16px;margin-top:14px;}
+    .count-box{
+      width:84px;height:84px;
+      background:#fff;
+      color:#1e1e1e;
+      border-radius:20px;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      font-weight:800;font-size:26px;
+      box-shadow:0 12px 24px rgba(0,0,0,0.2), inset 0 2px 6px rgba(255,255,255,0.6);
+    }
+    .count-label{font-size:12px;margin-top:6px;font-weight:800;color:#b12a2d;letter-spacing:0.6px;}
+
+    /* redeem button */
+    .redeem-btn{
+      margin:28px auto 0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:88%;
+      max-width:420px;
+      height:64px;
+      border-radius:36px;
+      background:linear-gradient(120deg, #b71619 0%, #b71619 32%, #ffffff 32%, #ffffff 100%);
+      color:#2c0f0f;
+      font-weight:800;
+      font-size:20px;
+      text-decoration:none;
+      position:relative;
+      box-shadow:0 12px 26px rgba(0,0,0,0.3);
+    }
+    .redeem-btn span.arrow{
+      position:absolute;
+      left:34px;
+      font-size:26px;
+      font-weight:800;
+      color:#fff;
+    }
+
+    /* footer hint */
+    .hint{
+      margin:18px 12px 0 12px;
+      text-align:center;
+      font-size:13px;
+      font-weight:600;
+      letter-spacing:0.5px;
+      color:#f6f0eb;
+    }
+
+    /* confirm overlay */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.35);
+      backdrop-filter:blur(6px);
+      display:none;
+      align-items:flex-start;
+      justify-content:center;
+      padding:18px 12px 32px 12px;
+      z-index:20;
+      overflow-y:auto;
+    }
+    .overlay.active{display:flex;}
+    .sheet{
+      width:100%;
+      max-width:520px;
+      background:linear-gradient(180deg,#c22027,#a30f13);
+      border-radius:32px;
+      padding:20px 16px 12px 16px;
+      box-shadow:0 18px 32px rgba(0,0,0,0.28);
+      color:#fff;
+    }
+    .sheet h2{
+      margin:8px 0 18px 0;
+      font-size:26px;
+      font-weight:800;
+      text-align:left;
+      line-height:1.2;
+    }
+    .cta-row{
+      display:flex;
+      gap:14px;
+      margin-bottom:18px;
+    }
+    .cta{
+      flex:1;
+      height:120px;
+      border-radius:22px;
+      border:3px solid #fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      font-size:22px;
+      font-weight:800;
+      text-decoration:none;
+      color:#2b0b0b;
+      background:#f2f2f2;
+      box-shadow:inset 0 1px 8px rgba(255,255,255,0.8);
+    }
+    .cta.primary{
+      background:linear-gradient(120deg,#b81418 0%, #8f0d12 100%);
+      color:#fff;
+      box-shadow:0 12px 24px rgba(0,0,0,0.22);
+    }
+    .note-card{
+      margin-top:8px;
+      background:#faf7f3;
+      color:#333;
+      border-radius:30px;
+      padding:18px 18px 20px 18px;
+      box-shadow:inset 0 1px 10px rgba(0,0,0,0.06);
+    }
+    .note-card h3{
+      margin:0 0 10px 0;
+      font-size:22px;
+      color:#4a4a4a;
+    }
+    .note-card ol{
+      margin:0;
+      padding-left:22px;
+      color:#444;
+      font-weight:700;
+      line-height:1.6;
+    }
+
+    @media (max-width:420px){
+      .count-box{width:76px;height:76px;font-size:24px;}
+      .plate{padding-bottom:28px;}
+      .product-title{font-size:26px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="snow" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <header>
+    <a href="index.html" class="logo"><img src="productimages/k.png" alt="Circle K logo"></a>
+  </header>
+
+  <a class="close-btn" href="index.html" aria-label="Close">×</a>
+
+  <main>
+    <section class="hero" aria-live="polite">
+      <div class="plate">
+        <div class="product-title" id="product-title">Free Circle K Chips</div>
+        <div class="product-sub" id="product-sub">(Any flavour, 66 g)</div>
+        <div class="scene">
+          <div class="badge-left" aria-hidden="true">
+            <svg class="badge-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 14h44v28a8 8 0 0 1-8 8H18a8 8 0 0 1-8-8V14Z" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M44 26H20m10-12v28" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>
+          </div>
+          <div class="badge-right" aria-hidden="true">
+            <svg class="badge-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 22h44v26a6 6 0 0 1-6 6H16a6 6 0 0 1-6-6V22Z" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 30h44m-22 0v24" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M32 22c-2.2 0-4-1.8-4-4s1.8-4 4-4c4 0 6 6 6 6s-3.8 2-6 2Zm0 0c2.2 0 4-1.8 4-4s-1.8-4-4-4c-4 0-6 6-6 6s3.8 2 6 2Z" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <img class="product-img" id="product-img" src="productimages/chips.png" alt="Free Circle K Chips">
+        </div>
+
+        <div class="expires">EXPIRES IN</div>
+        <div class="countdown">
+          <div class="count-box"><div id="dd">04</div><div class="count-label">DAYS</div></div>
+          <div class="count-box"><div id="hh">22</div><div class="count-label">HOURS</div></div>
+          <div class="count-box"><div id="mm">26</div><div class="count-label">MIN</div></div>
+          <div class="count-box"><div id="ss">35</div><div class="count-label">SEC</div></div>
+        </div>
+      </div>
+
+      <a class="redeem-btn" id="redeem-link" href="#" aria-label="Redeem">
+        <span class="arrow">→</span>
+        REDEEM
+      </a>
+      <div class="hint">PICK UP YOUR PRIZE BEFORE YOU GO TO THE CHECKOUT</div>
+    </section>
+  </main>
+
+  <div class="overlay" id="overlay" aria-hidden="true">
+    <div class="sheet">
+      <h2>ARE YOU SURE YOU<br>WANT TO REDEEM?</h2>
+      <div class="cta-row">
+        <a href="#" id="cta-no" class="cta">NO,<br>LATER</a>
+        <a href="#" id="cta-yes" class="cta primary">REDEEM<br>NOW</a>
+      </div>
+      <div class="note-card">
+        <h3>PLEASE NOTE</h3>
+        <ol>
+          <li>Pick up your prize before you go to the checkout.</li>
+          <li>You have 5 minutes to show the coupon to the staff when you click 'Redeem'.</li>
+          <li>Remember to turn up the brightness on the screen, so everything goes easier.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const title = params.get('title') || 'Free Circle K Chips';
+    const sub = params.get('sub') || '(Any flavour, 66 g)';
+    const img = params.get('img') || 'productimages/chips.png';
+    const product = (params.get('product') || 'chips').toLowerCase();
+
+    document.getElementById('product-title').textContent = title;
+    document.getElementById('product-sub').textContent = sub;
+    const productImg = document.getElementById('product-img');
+    productImg.src = img;
+    productImg.alt = title;
+
+    // Build redeem link to fullyredeem page
+    const qs = new URLSearchParams({product,title,sub,img}).toString();
+    const redeemUrl = `fullyredeem.html?${qs}`;
+
+    const overlay = document.getElementById('overlay');
+    const redeemLink = document.getElementById('redeem-link');
+    const ctaNo = document.getElementById('cta-no');
+    const ctaYes = document.getElementById('cta-yes');
+
+    redeemLink.addEventListener('click',(e)=>{
+      e.preventDefault();
+      overlay.classList.add('active');
+      overlay.setAttribute('aria-hidden','false');
+    });
+
+    ctaNo.addEventListener('click',(e)=>{
+      e.preventDefault();
+      overlay.classList.remove('active');
+      overlay.setAttribute('aria-hidden','true');
+      window.location.href = 'index.html';
+    });
+
+    ctaYes.addEventListener('click',(e)=>{
+      e.preventDefault();
+      window.location.href = redeemUrl;
+    });
+
+    // Static countdown resembling the screenshot (04 22 26 35)
+    const target = Date.now() + (4*24*3600 + 22*3600 + 26*60 + 35) * 1000;
+    const setVal = (id,val)=>document.getElementById(id).textContent = String(val).padStart(2,'0');
+    function tick(){
+      const t = Math.max(0, Math.floor((target - Date.now())/1000));
+      const d = Math.floor(t/86400);
+      const h = Math.floor((t%86400)/3600);
+      const m = Math.floor((t%3600)/60);
+      const s = t%60;
+      setVal('dd', d);
+      setVal('hh', h);
+      setVal('mm', m);
+      setVal('ss', s);
+    }
+    tick();
+    setInterval(tick,1000);
+  </script>
+</body>
+</html>
