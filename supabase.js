@@ -88,7 +88,7 @@ export async function fetchBugReports() {
     const { data, error } = await supabase
       .from('bug_reports')
       .select('*')
-      .order('timestamp', { ascending: false })
+      .order('created_at', { ascending: false })
       .limit(200);
     if (error) throw error;
     return data || [];
