@@ -8,6 +8,13 @@ type = "javascript"  # or "webpack"/"modules" depending on your setup
 [[kv_namespaces]]
 binding = "CIRCLEK"
 id = "a48f38399796455b99d7ab9f01f4b356"
+# binding = "ANOTHER_NAMESPACE"
+[observability]
+[observability.logs]
+enabled = false
+head_sampling_rate = 1
+invocation_logs = true
+persist = true
 
 # Optional: add more KV namespaces if needed
 # [[kv_namespaces]]
