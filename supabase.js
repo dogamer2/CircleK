@@ -180,3 +180,24 @@ export function subscribeToStatusReports(callback) {
     return () => {};
   }
 }
+export async function verifyCode(code) {
+  const { data, error } = await supabase
+    .from('access_codes')
+    .select('*')
+    .eq('code', code)
+    .eq('used', false)
+    .single();
+
+  return data;
+}
+export async function markCodeUsed(code) {
+  return await supabase
+    .from('access_codes')
+    .update({ used: true })
+    .eq('code', code);
+}
+export async function generateCode(code) {
+  return await supabase
+    .from('access_codes')
+    .insert([{ code }]);
+}
