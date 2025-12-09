@@ -1,6 +1,20 @@
 name = "circlek"
+main = "worker.js"
 compatibility_date = "2024-11-20"
 
+type = "javascript"  # or "webpack"/"modules" depending on your setup
+
+# KV namespace binding
 [[kv_namespaces]]
 binding = "CIRCLEK"
 id = "a48f38399796455b99d7ab9f01f4b356"
+
+# Optional: add more KV namespaces if needed
+# [[kv_namespaces]]
+# binding = "ANOTHER_NAMESPACE"
+# id = "your_kv_id_here"
+
+# Optional environment settings
+# [env.production]
+# route = "https://yourdomain.com/*"
+# zone_id = "your_zone_id_here"
