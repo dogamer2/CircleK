@@ -1,11 +1,14 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <script type="module" src="supabase.js"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Tool Selector</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Supabase client module (must be present in same folder) -->
+  <script type="module" src="./supabase.js"></script>
+
   <style>
     :root{
       --red:#b81618;
@@ -691,7 +694,7 @@
     <div class="money-saved">
       <div class="saved-title">Total Money Saved</div>
       <div class="saved-amount" id="savedAmount">$0.00</div>
-      <button onclick="loadMoneySaved()" class="refresh-btn" title="Refresh money counter">↻</button>
+      <button id="refreshBtn" class="refresh-btn" title="Refresh money counter">↻</button>
     </div>
 
     <div class="action-buttons">
@@ -742,82 +745,32 @@
       </p>
     </div>
   </div>
-
 <script>
     // Prices data embedded directly
-
-    // SINGLE CLEAN RESET FUNCTION
-    window.resetmoney = function() {
-      // Try API first, then fallback to localStorage
-      fetch('/api/reset-money', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          const savedAmountEl = document.getElementById('savedAmount');
-          if (savedAmountEl) {
-            savedAmountEl.textContent = '$0.00';
-          }
-          alert('Money reset to $0.00 successfully!');
-          return 'Money reset successfully';
-        }
-      })
-      .catch(error => {
-        console.log('API not available, using localStorage:', error);
-        // Fallback to localStorage
-        localStorage.clear();
-        const savedAmountEl = document.getElementById('savedAmount');
-        if (savedAmountEl) {
-          savedAmountEl.textContent = '$0.00';
-        }
-        alert('Money reset to $0.00 successfully!');
-        return 'Money reset successfully';
-      });
+    const prices = {
+      chips: 4.99,
+      candy: 3.49,
+      alani: 5.99,
+      arizona: 2.99,
+      froster: 3.99,
+      beverage: 2.49
     };
 
-    // Load prices and track redeemed items (global function)
-    window.loadMoneySaved = function() {
-      try {
-        // Try API first
-        fetch('/api/get-money')
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              document.getElementById('savedAmount').textContent = `$${data.totalSaved.toFixed(2)}`;
-              console.log('Money updated from API:', data.totalSaved, 'Redeemed items:', data.redeemedItems);
-              return;
-            }
-          })
-          .catch(error => {
-            console.log('API not available, using localStorage:', error);
-            // Fallback to localStorage
-            const redeemedItems = JSON.parse(localStorage.getItem('redeemedItems') || '[]');
-            
-            let totalSaved = 0;
-            // Count each redemption separately
-            Object.keys(prices).forEach(product => {
-              const redemptionCount = parseInt(localStorage.getItem(`redemptionCount_${product}`) || '0');
-              if (redemptionCount > 0) {
-                totalSaved += prices[product] * redemptionCount;
-              }
-            });
-            
-            document.getElementById('savedAmount').textContent = `$${totalSaved.toFixed(2)}`;
-            console.log('Money updated from localStorage:', totalSaved, 'Redeemed items:', redeemedItems);
-          });
-      } catch (error) {
-        console.error('Error loading prices:', error);
-        document.getElementById('savedAmount').textContent = `$0.00`;
+    // (we keep a small localStorage fallback for offline use)
+    // SINGLE CLEAN RESET FUNCTION (kept name for compatibility)
+    window.resetmoney = async function() {
+      // This function will be overwritten by the Supabase script later if available.
+      // Keep a local fallback just in case.
+      localStorage.removeItem('redeemedItems');
+      localStorage.removeItem('bugReports');
+      localStorage.setItem('totalSavedFallback', '0');
+      const savedAmountEl = document.getElementById('savedAmount');
+      if (savedAmountEl) {
+        savedAmountEl.textContent = '$0.00';
       }
-    }
-
-    // Show total potential value
-    window.showTotalValue = function() {
-      const totalValue = Object.values(prices).reduce((sum, price) => sum + price, 0);
-      document.getElementById('savedAmount').textContent = `$${totalValue.toFixed(2)}`;
-    }
+      alert('Local money reset to $0.00 successfully!');
+      return 'Local money reset successfully';
+    };
 
     // Add some interactive effects
     document.addEventListener('DOMContentLoaded', function() {
@@ -833,17 +786,27 @@
         });
       });
 
-      // Load actual redeemed money (replaces total value display)
-      loadMoneySaved();
-      
-      // Initialize working status
-      checkDailyStatus();
+      // Refresh button
+      const refreshBtn = document.getElementById('refreshBtn');
+      if (refreshBtn) {
+        refreshBtn.addEventListener('click', () => {
+          if (window.loadMoneySaved) window.loadMoneySaved();
+        });
+      }
+
+      // Initialize working status (will be replaced by Supabase script)
+      if (typeof checkDailyStatus === 'function') {
+        checkDailyStatus();
+      }
     });
 
     // Listen for messages from fullyredeem.html to update counter in real-time
     window.addEventListener('message', function(event) {
-      if (event.data.type === 'itemRedeemed') {
-        loadMoneySaved(); // Refreshes money counter
+      // handled by Supabase script (if available)
+      if (event.data && event.data.type === 'itemRedeemed') {
+        if (window.handleRedeemMessage) {
+          window.handleRedeemMessage(event.data);
+        }
       }
     });
 
@@ -896,6 +859,7 @@
     }
 
     window.debugLocalStorage = function() {
+      // Fallback debug function (keeps original behavior)
       const redeemedItems = JSON.parse(localStorage.getItem('redeemedItems') || '[]');
       const totalValue = Object.values(prices).reduce((sum, price) => sum + price, 0);
       let redeemedValue = 0;
@@ -953,104 +917,7 @@ ${redemptionDetails.length > 0 ? redemptionDetails.join('\n') : 'No redemptions 
       });
     };
 
-    // Submit report
-    window.submitReport = function(event) {
-      event.preventDefault();
-      
-      const name = document.getElementById('reportName').value || 'Anonymous';
-      const type = document.getElementById('reportType').value;
-      const description = document.getElementById('reportDescription').value;
-      
-      const report = {
-        timestamp: new Date().toISOString(),
-        name: name,
-        type: type,
-        description: description
-      };
-      
-      // Try API first
-      fetch('/api/report-bug', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(report)
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          // Show confirmation
-          const confirmMsg = document.createElement('div');
-          confirmMsg.textContent = '✓ Report submitted to cloud!';
-          confirmMsg.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #4CAF50;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            z-index: 1001;
-            animation: slideIn 0.3s ease;
-          `;
-          document.body.appendChild(confirmMsg);
-          
-          setTimeout(() => {
-            if (confirmMsg.parentNode) {
-              confirmMsg.remove();
-            }
-          }, 3000);
-          
-          // Close modal
-          document.querySelector('.report-modal').remove();
-          
-          // Update bug reports display if it's open
-          if (document.getElementById('bugReportsDisplay').style.display !== 'none') {
-            displayBugReports();
-          }
-        }
-      })
-      .catch(error => {
-        console.log('API not available, using localStorage:', error);
-        
-        // Fallback to localStorage
-        const existingReports = JSON.parse(localStorage.getItem('bugReports') || '[]');
-        existingReports.push(report);
-        localStorage.setItem('bugReports', JSON.stringify(existingReports));
-        
-        // Show confirmation
-        const confirmMsg = document.createElement('div');
-        confirmMsg.textContent = '✓ Report saved locally!';
-        confirmMsg.style.cssText = `
-          position: fixed;
-          top: 20px;
-          right: 20px;
-          background: #ff9800;
-          color: white;
-          padding: 12px 20px;
-          border-radius: 8px;
-          font-weight: 600;
-          z-index: 1001;
-          animation: slideIn 0.3s ease;
-        `;
-        document.body.appendChild(confirmMsg);
-        
-        setTimeout(() => {
-          if (confirmMsg.parentNode) {
-            confirmMsg.remove();
-          }
-        }, 3000);
-        
-        // Close modal
-        document.querySelector('.report-modal').remove();
-        
-        // Update bug reports display if it's open
-        if (document.getElementById('bugReportsDisplay').style.display !== 'none') {
-          displayBugReports();
-        }
-      });
-    };
-
-    // Export bugs to downloadable file
+    // Export bugs to downloadable file (fallback uses localStorage)
     window.exportBugs = function() {
       const reports = JSON.parse(localStorage.getItem('bugReports') || '[]');
       
@@ -1086,90 +953,24 @@ ${redemptionDetails.length > 0 ? redemptionDetails.join('\n') : 'No redemptions 
       console.log('Content:', bugsDataContent);
     };
 
-    // View bug reports in UI
-    window.viewBugReports = function() {
-      const display = document.getElementById('bugReportsDisplay');
-      display.style.display = display.style.display === 'none' ? 'block' : 'none';
-      
-      if (display.style.display === 'block') {
-        displayBugReports();
-      }
-    };
-
-    // Close bug reports display
-    window.closeBugReports = function() {
-      document.getElementById('bugReportsDisplay').style.display = 'none';
-    };
-
-    // Display bug reports in the UI
-    window.displayBugReports = function() {
-      // Try API first
-      fetch('/api/get-bugs')
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            renderBugReports(data.bugReports);
-          }
-        })
-        .catch(error => {
-          console.log('API not available, using localStorage:', error);
-          // Fallback to localStorage
-          const reports = JSON.parse(localStorage.getItem('bugReports') || '[]');
-          renderBugReports(reports);
-        });
-    };
-
-    // Helper function to render bug reports
-    window.renderBugReports = function(reports) {
-      const listContainer = document.getElementById('bugReportsList');
+    // Console command to view all bugs (fallback)
+    window.viewBugs = function() {
+      const reports = JSON.parse(localStorage.getItem('bugReports') || '[]');
+      console.log('All Bug Reports:');
+      console.table(reports);
       
       if (reports.length === 0) {
-        listContainer.innerHTML = '<div class="no-bug-reports">No bug reports yet. Submit your first bug report!</div>';
+        console.log('No bug reports found.');
       } else {
-        listContainer.innerHTML = reports.map((report, index) => `
-          <div class="bug-report-item">
-            <div class="bug-report-header">Bug #${index + 1}: ${report.type}</div>
-            <div class="bug-report-meta">
-              By: ${report.name} | ${new Date(report.timestamp).toLocaleString()}
-            </div>
-            <div class="bug-report-description">${report.description}</div>
-          </div>
-        `).join('');
+        console.log('Total reports:', reports.length);
       }
     };
 
-    // Console command to view all bugs
-    window.viewBugs = function() {
-      // Try API first
-      fetch('/api/get-bugs')
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            console.log('All Bug Reports (from API):');
-            console.table(data.bugReports);
-            console.log('Total reports:', data.bugReports.length);
-          }
-        })
-        .catch(error => {
-          console.log('API not available, using localStorage:', error);
-          // Fallback to localStorage
-          const reports = JSON.parse(localStorage.getItem('bugReports') || '[]');
-          console.log('All Bug Reports (from localStorage):');
-          console.table(reports);
-          
-          if (reports.length === 0) {
-            console.log('No bug reports found.');
-          } else {
-            console.log('Total reports:', reports.length);
-          }
-        });
-    };
-
-    // Console command to clear all bugs
+    // Console command to clear all bugs (fallback)
     window.clearBugs = function() {
       if (confirm('Are you sure you want to clear all bug reports? This cannot be undone.')) {
         localStorage.removeItem('bugReports');
-        console.log('All bug reports cleared.');
+        console.log('All bug reports cleared (local).');
       }
     };
 
@@ -1182,171 +983,295 @@ ${redemptionDetails.length > 0 ? redemptionDetails.join('\n') : 'No redemptions 
       console.log('Available window functions:', Object.keys(window).filter(key => key.includes('reset')));
     };
   </script>
+<script type="module">
+import {
+  supabase,                 // client (for low-level access if needed)
+  getTotalSaved,
+  addToTotal,
+  resetTotal,
+  submitBugReport,
+  fetchBugReports,
+  submitStatusReport,
+  fetchLatestStatus,
+  subscribeToTotals,
+  subscribeToBugReports,
+  subscribeToStatusReports
+} from './supabase.js';
 
-<!-- WORKING STATUS SYSTEM -->
-<script>
-  const prices = {
-  chips: 1.99,
-  candy: 3.29,
-  alani: 3.99,
-  arizona: 2.19,
-  froster: 1.69
+/* ---------- UI Integration ---------- */
+
+// Load total from Supabase and display
+window.loadMoneySaved = async function() {
+  try {
+    const total = await getTotalSaved();
+    document.getElementById('savedAmount').textContent = `$${Number(total).toFixed(2)}`;
+  } catch (err) {
+    console.error('Error loading total from Supabase:', err);
+    // fallback to localStorage
+    const fallback = Number(localStorage.getItem('totalSavedFallback') || '0');
+    document.getElementById('savedAmount').textContent = `$${fallback.toFixed(2)}`;
+  }
 };
 
-  // WORKING STATUS SYSTEM
-    window.updateWorkingStatus = function() {
-      const today = new Date();
-      const dateString = today.toLocaleDateString('en-US', { 
-        month: 'long', 
-        day: 'numeric', 
-        year: 'numeric' 
-      });
-      
-      const statusEl = document.querySelector('.status-info');
-      const isWorking = localStorage.getItem('circleKWorking') !== 'false';
-      
-      if (isWorking) {
-        statusEl.textContent = `Circle K working as of ${dateString} | Version 1.0`;
+// Reset total (Supabase)
+window.resetmoney = async function() {
+  try {
+    await resetTotal();
+    document.getElementById('savedAmount').textContent = '$0.00';
+    // update fallback too
+    localStorage.setItem('totalSavedFallback', '0');
+    alert('Money reset in Supabase!');
+  } catch (err) {
+    console.error('Error resetting total:', err);
+    // fallback
+    localStorage.setItem('totalSavedFallback', '0');
+    document.getElementById('savedAmount').textContent = '$0.00';
+    alert('Failed to reset remotely — reset locally instead.');
+  }
+};
+
+// Handle redeem messages (from fullyredeem.html or child frames)
+window.handleRedeemMessage = async function(data) {
+  if (!data || typeof data.amount !== 'number') return;
+  try {
+    const newTotal = await addToTotal(Number(data.amount));
+    document.getElementById('savedAmount').textContent = `$${Number(newTotal).toFixed(2)}`;
+    localStorage.setItem('totalSavedFallback', String(newTotal));
+  } catch (err) {
+    console.error('Error adding to total:', err);
+    // fallback local addition
+    const local = Number(localStorage.getItem('totalSavedFallback') || '0');
+    const next = local + Number(data.amount);
+    localStorage.setItem('totalSavedFallback', String(next));
+    document.getElementById('savedAmount').textContent = `$${next.toFixed(2)}`;
+  }
+};
+
+// Wire message listener to handleRedeemMessage
+window.addEventListener('message', function(event) {
+  if (event.data && event.data.type === 'redeemItem') {
+    if (window.handleRedeemMessage) window.handleRedeemMessage(event.data);
+  }
+});
+
+/* ---------- Bug reports ---------- */
+
+// Submit report (replaces previous localStorage submitReport)
+window.submitReport = async function(ev) {
+  ev.preventDefault();
+  const name = document.getElementById('reportName').value || 'Anonymous';
+  const type = document.getElementById('reportType').value;
+  const description = document.getElementById('reportDescription').value;
+
+  try {
+    await submitBugReport({ name, type, description });
+    // confirmation toast
+    const confirmMsg = document.createElement('div');
+    confirmMsg.textContent = '✓ Report saved!';
+    confirmMsg.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #ff9800;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      z-index: 1001;
+      animation: slideIn 0.3s ease;
+    `;
+    document.body.appendChild(confirmMsg);
+    setTimeout(() => confirmMsg.remove(), 3000);
+  } catch (err) {
+    console.error('Failed to submit bug to Supabase:', err);
+    // fallback to localStorage
+    const existing = JSON.parse(localStorage.getItem('bugReports') || '[]');
+    const report = { timestamp: new Date().toISOString(), name, type, description };
+    existing.push(report);
+    localStorage.setItem('bugReports', JSON.stringify(existing));
+    alert('Saved locally — failed to save to Supabase.');
+  } finally {
+    // close modal if open
+    const modal = document.querySelector('.report-modal');
+    if (modal) modal.remove();
+
+    // update display if open
+    if (document.getElementById('bugReportsDisplay').style.display !== 'none') {
+      displayBugReports();
+    }
+  }
+};
+
+// Display bug reports in panel (reads from Supabase, fallback to localStorage)
+window.displayBugReports = async function() {
+  const listContainer = document.getElementById('bugReportsList');
+  try {
+    const reports = await fetchBugReports();
+    if (!reports || reports.length === 0) {
+      listContainer.innerHTML = '<div class="no-bug-reports">No bug reports yet. Submit your first bug report!</div>';
+      return;
+    }
+    listContainer.innerHTML = reports.map((report, index) => `
+      <div class="bug-report-item">
+        <div class="bug-report-header">Bug #${index + 1}: ${escapeHtml(report.type)}</div>
+        <div class="bug-report-meta">
+          By: ${escapeHtml(report.name || 'Anonymous')} | ${new Date(report.timestamp).toLocaleString()}
+        </div>
+        <div class="bug-report-description">${escapeHtml(report.description)}</div>
+      </div>
+    `).join('');
+  } catch (err) {
+    console.error('Error fetching bug reports from Supabase:', err);
+    // fallback
+    const reports = JSON.parse(localStorage.getItem('bugReports') || '[]');
+    if (!reports || reports.length === 0) {
+      listContainer.innerHTML = '<div class="no-bug-reports">No bug reports yet. Submit your first bug report!</div>';
+    } else {
+      listContainer.innerHTML = reports.map((report, index) => `
+        <div class="bug-report-item">
+          <div class="bug-report-header">Bug #${index + 1}: ${escapeHtml(report.type)}</div>
+          <div class="bug-report-meta">
+            By: ${escapeHtml(report.name || 'Anonymous')} | ${new Date(report.timestamp).toLocaleString()}
+          </div>
+          <div class="bug-report-description">${escapeHtml(report.description)}</div>
+        </div>
+      `).join('');
+    }
+  }
+};
+
+// Toggle bug reports panel
+window.viewBugReports = function() {
+  const display = document.getElementById('bugReportsDisplay');
+  display.style.display = display.style.display === 'none' ? 'block' : 'none';
+  if (display.style.display === 'block') displayBugReports();
+};
+
+window.closeBugReports = function() {
+  document.getElementById('bugReportsDisplay').style.display = 'none';
+};
+
+/* ---------- Working status ---------- */
+
+async function refreshStatusDisplay() {
+  try {
+    const latest = await fetchLatestStatus();
+    const statusEl = document.querySelector('.status-info');
+    if (latest && latest.status) {
+      const dateString = new Date(latest.timestamp).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      const text = latest.status === 'working'
+        ? `Circle K working as of ${dateString} | Version 1.0`
+        : `Circle K may not be working as of ${dateString} | Version 1.0`;
+      statusEl.textContent = text;
+    } else {
+      // fallback: local storage or default
+      const fallback = localStorage.getItem('circleKWorking');
+      const today = new Date().toLocaleDateString();
+      if (fallback === 'false') {
+        statusEl.textContent = `Circle K may not be working as of ${today} | Version 1.0`;
       } else {
-        statusEl.textContent = `Circle K may not be working as of ${dateString} | Version 1.0`;
+        statusEl.textContent = `Circle K working as of ${today} | Version 1.0`;
       }
-    };
+    }
+  } catch (err) {
+    console.error('Error fetching latest status:', err);
+  }
+}
 
-    // Report not working
-    window.reportNotWorking = function() {
-      // Try API first
-      fetch('/api/update-status', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          status: 'not_working',
-          timestamp: new Date().toISOString()
-        })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          console.log('Status updated via API:', data);
-          updateWorkingStatus();
-        }
-      })
-      .catch(error => {
-        console.log('API not available, using localStorage:', error);
-        // Fallback to localStorage
-        localStorage.setItem('circleKWorking', 'false');
-        localStorage.setItem('lastStatusChange', new Date().toISOString());
-        updateWorkingStatus();
-      });
-      
-      // Show confirmation
-      const msg = document.createElement('div');
-      msg.textContent = '✓ Status updated to "may not be working"';
-      msg.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #f44336;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 8px;
-        font-weight: 600;
-        z-index: 1001;
-        animation: slideIn 0.3s ease;
-      `;
-      document.body.appendChild(msg);
-      
-      setTimeout(() => {
-        if (msg.parentNode) {
-          msg.remove();
-        }
-      }, 3000);
-    };
+window.reportWorking = async function() {
+  try {
+    await submitStatusReport('working');
+    localStorage.setItem('circleKWorking', 'true');
+    refreshStatusDisplay();
+    toast('✓ Status updated to "working"', '#4CAF50');
+  } catch (err) {
+    console.error('Error reporting working:', err);
+    // fallback
+    localStorage.setItem('circleKWorking', 'true');
+    refreshStatusDisplay();
+    toast('Saved locally: status working', '#4CAF50');
+  }
+};
 
-    // Report working
-    window.reportWorking = function() {
-      // Try API first
-      fetch('/api/update-status', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          status: 'working',
-          timestamp: new Date().toISOString()
-        })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          console.log('Status updated via API:', data);
-          updateWorkingStatus();
-        }
-      })
-      .catch(error => {
-        console.log('API not available, using localStorage:', error);
-        // Fallback to localStorage
-        localStorage.setItem('circleKWorking', 'true');
-        localStorage.setItem('lastStatusChange', new Date().toISOString());
-        updateWorkingStatus();
-      });
-      
-      // Show confirmation
-      const msg = document.createElement('div');
-      msg.textContent = '✓ Status updated to "working"';
-      msg.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #4CAF50;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 8px;
-        font-weight: 600;
-        z-index: 1001;
-        animation: slideIn 0.3s ease;
-      `;
-      document.body.appendChild(msg);
-      
-      setTimeout(() => {
-        if (msg.parentNode) {
-          msg.remove();
-        }
-      }, 3000);
-    };
+window.reportNotWorking = async function() {
+  try {
+    await submitStatusReport('not working');
+    localStorage.setItem('circleKWorking', 'false');
+    refreshStatusDisplay();
+    toast('✓ Status updated to "may not be working"', '#f44336');
+  } catch (err) {
+    console.error('Error reporting not working:', err);
+    localStorage.setItem('circleKWorking', 'false');
+    refreshStatusDisplay();
+    toast('Saved locally: status not working', '#f44336');
+  }
+};
 
-    // Auto-update status daily
-    window.checkDailyStatus = function() {
-      // Try API first
-      fetch('/api/get-status')
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            const statusEl = document.querySelector('.status-info');
-            if (data.status === 'working') {
-              statusEl.textContent = `Circle K working as of ${data.dateString} | Version 1.0`;
-            } else {
-              statusEl.textContent = `Circle K may not be working as of ${data.dateString} | Version 1.0`;
-            }
-          }
-        })
-        .catch(error => {
-          console.log('API not available, using localStorage:', error);
-          // Fallback to localStorage
-          const lastChange = localStorage.getItem('lastStatusChange');
-          const today = new Date().toDateString();
-          
-          if (lastChange) {
-            const lastChangeDate = new Date(lastChange).toDateString();
-            if (lastChangeDate !== today) {
-              // New day, reset to working by default
-              localStorage.setItem('circleKWorking', 'true');
-              localStorage.setItem('lastStatusChange', new Date().toISOString());
-            }
-          }
-          
-          updateWorkingStatus();
-        });
-    };
+// small toast helper
+function toast(msg, bg = '#ff9800') {
+  const el = document.createElement('div');
+  el.textContent = msg;
+  el.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: ${bg};
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    z-index: 1001;
+    animation: slideIn 0.3s ease;
+  `;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
 
+/* ---------- Realtime subscriptions ---------- */
 
-  </script>
+(async function initRealtime() {
+  // initial load
+  await loadMoneySaved();
+  await displayBugReports();
+  await refreshStatusDisplay();
+
+  // subscribe to totals (UPDATE)
+  subscribeToTotals(async (payload) => {
+    if (payload && payload.new && payload.new.total_saved != null) {
+      document.getElementById('savedAmount').textContent = `$${Number(payload.new.total_saved).toFixed(2)}`;
+      localStorage.setItem('totalSavedFallback', String(payload.new.total_saved));
+    } else if (payload && payload.eventType === 'UPDATE') {
+      // fallback: fetch full
+      await loadMoneySaved();
+    }
+  });
+
+  // subscribe to bug reports (INSERT)
+  subscribeToBugReports((payload) => {
+    // New bug arrived — refresh list if open
+    if (document.getElementById('bugReportsDisplay').style.display === 'block') {
+      displayBugReports();
+    }
+  });
+
+  // subscribe to status reports (INSERT)
+  subscribeToStatusReports((payload) => {
+    // refresh status display
+    refreshStatusDisplay();
+  });
+})();
+
+/* ---------- Helper utilities ---------- */
+
+function escapeHtml(unsafe) {
+  if (!unsafe && unsafe !== 0) return '';
+  return String(unsafe)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+</script>
 </body>
 </html>
