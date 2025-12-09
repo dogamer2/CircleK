@@ -1,16 +1,6 @@
-name = "circlek-api"
-type = "module"
-main = "worker.js"
-compatibility_date = "2024-07-18"
+name = "circlek"
+compatibility_date = "2024-11-20"
 
 [[kv_namespaces]]
-binding = "REDEEMED"
-id = "061cf56f0c9a4004b154c851146dacec"
-
-[[kv_namespaces]]
-binding = "BUGS"
-id = "4f410c265c7a4e3da7452aa45d40a0f3"
-
-[[kv_namespaces]]
-binding = "STATUS"
-id = "313ff41199064b089bbfa6cee445cc25"
+binding = "CIRCLEK"
+id = "a48f38399796455b99d7ab9f01f4b356"
