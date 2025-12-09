@@ -8,6 +8,12 @@
 
   <!-- Supabase client module (must be present in same folder) -->
   <script type="module" src="./supabase.js"></script>
+  <script>
+if (!localStorage.getItem('authCodeValid')) {
+  window.location.href = "/login.html";
+}
+</script>
+
 
   <style>
     :root{
