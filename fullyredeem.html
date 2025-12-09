@@ -239,6 +239,11 @@
       letter-spacing:1px;
       color:#111;
     }
+
+    @keyframes slideIn{
+      from{transform:translateX(100%); opacity:0;}
+      to{transform:translateX(0); opacity:1;}
+    }
   </style>
 </head>
 <body>
@@ -347,37 +352,137 @@
     const val = productCodes[product] || '000000000000';
     document.getElementById('code-text').textContent = val;
 
-    // Track redeemed items in localStorage - always add money
+    // Track redeemed items - try API first, then localStorage
     function trackRedeemedItem(product) {
       console.log('Tracking redeemed item:', product);
       
-      // Get current redemption count for this product
-      const redemptionKey = `redemptionCount_${product}`;
-      const currentCount = parseInt(localStorage.getItem(redemptionKey) || '0');
-      const newCount = currentCount + 1;
+      // Product prices
+      const prices = {
+        chips: 4.99,
+        candy: 3.49,
+        alani: 5.99,
+        arizona: 2.99,
+        froster: 3.99
+      };
       
-      // Update redemption count
-      localStorage.setItem(redemptionKey, newCount.toString());
+      const price = prices[product] || 0;
       
-      // Also add to redeemed items list for compatibility
-      const redeemedItems = JSON.parse(localStorage.getItem('redeemedItems') || '[]');
-      if (!redeemedItems.includes(product)) {
-        redeemedItems.push(product);
-      }
-      localStorage.setItem('redeemedItems', JSON.stringify(redeemedItems));
-      
-      console.log('Item redeemed:', product);
-      console.log('Redemption count for', product, ':', newCount);
-      console.log('Current redeemed items:', redeemedItems);
+      // Try API first
+      fetch('/api/add-money', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          product: product,
+          price: price
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          console.log('Item tracked via API:', product, 'Price:', price);
+          console.log('Total saved:', data.totalSaved);
+          
+          // Show success notification
+          showNotification('✓ Item redeemed successfully!', 'success');
+          
+          // Notify parent window to update money counter
+          if (window.opener) {
+            window.opener.postMessage({ 
+              type: 'itemRedeemed', 
+              product: product,
+              totalSaved: data.totalSaved,
+              redeemedItems: data.redeemedItems
+            }, '*');
+          }
+        } else {
+          throw new Error(data.error || 'API returned error');
+        }
+      })
+      .catch(error => {
+        console.log('API not available, using localStorage:', error);
+        
+        // Fallback to localStorage
+        const redemptionKey = `redemptionCount_${product}`;
+        const currentCount = parseInt(localStorage.getItem(redemptionKey) || '0');
+        const newCount = currentCount + 1;
+        
+        // Update redemption count
+        localStorage.setItem(redemptionKey, newCount.toString());
+        
+        // Also add to redeemed items list for compatibility
+        const redeemedItems = JSON.parse(localStorage.getItem('redeemedItems') || '[]');
+        if (!redeemedItems.includes(product)) {
+          redeemedItems.push(product);
+        }
+        localStorage.setItem('redeemedItems', JSON.stringify(redeemedItems));
+        
+        console.log('Item redeemed via localStorage:', product);
+        console.log('Redemption count for', product, ':', newCount);
+        console.log('Current redeemed items:', redeemedItems);
+        
+        // Show fallback notification
+        showNotification('⚠ Item saved locally', 'warning');
+        
+        // Notify parent window to update money counter
+        if (window.opener) {
+          window.opener.postMessage({ 
+            type: 'itemRedeemed', 
+            product: product,
+            redeemedItems: redeemedItems
+          }, '*');
+        }
+      });
     }
+
+    // Show notification to user
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.textContent = message;
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        z-index: 1001;
+        animation: slideIn 0.3s ease;
+        color: white;
+        ${
+          type === 'success' ? 'background: #4CAF50;' :
+          type === 'warning' ? 'background: #ff9800;' :
+          type === 'error' ? 'background: #f44336;' :
+          'background: #2196F3;'
+        }
+      `;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.remove();
+        }
+      }, 3000);
+    }
+
+    // Test API connectivity on page load
+    function testAPIConnectivity() {
+      fetch('/api/get-money')
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            console.log('✓ API is working');
+          }
+        })
+        .catch(error => {
+          console.log('⚠ API not available, will use localStorage:', error);
+        });
+    }
+
+    // Test API on page load
+    testAPIConnectivity();
 
     // Track this item as redeemed
     trackRedeemedItem(product);
-
-    // Notify parent window (if it exists) to update money counter
-    if (window.opener) {
-      window.opener.postMessage({ type: 'itemRedeemed', product: product }, '*');
-    }
 
     // Also try to update localStorage for the main window
     window.addEventListener('beforeunload', function() {
