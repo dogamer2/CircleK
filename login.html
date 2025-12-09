@@ -1,0 +1,29 @@
+<input id="accessCode" placeholder="Enter access code">
+<button id="submit">Enter</button>
+<div id="msg"></div>
+
+<script type="module">
+import { verifyCode, markCodeUsed } from './supabase.js';
+
+document.getElementById('submit').onclick = async () => {
+  const code = document.getElementById('accessCode').value.trim();
+  const msg = document.getElementById('msg');
+
+  if (!code) return;
+
+  const valid = await verifyCode(code);
+
+  if (!valid) {
+    msg.textContent = "❌ Invalid or used code";
+    return;
+  }
+
+  await markCodeUsed(code);
+
+  // Remember login
+  localStorage.setItem('authCodeValid', '1');
+
+  msg.textContent = "✅ Code accepted! Redirecting...";
+  setTimeout(() => location.href = 'index.html', 1000);
+};
+</script>
