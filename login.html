@@ -25,7 +25,7 @@
     border-radius: 18px;
     padding: 35px 30px;
     width: 100%;
-    max-width: 360px;
+    max-width: 400px;
     box-shadow: 0 10px 45px rgba(0,0,0,0.35);
     text-align: center;
     animation: fadeIn 0.6s ease-out;
@@ -36,23 +36,26 @@
     to   { opacity: 1; transform: translateY(0px); }
   }
 
-  h1 {
+  h1, h2 {
     margin-top: 0;
-    margin-bottom: 22px;
-    font-size: 28px;
+    margin-bottom: 18px;
+    font-size: 26px;
     letter-spacing: 0.4px;
   }
 
-  input {
+  input, textarea {
     width: 100%;
-    padding: 14px;
+    padding: 12px;
     border-radius: 10px;
     border: none;
     outline: none;
     font-size: 16px;
-    margin-bottom: 18px;
+    margin-bottom: 14px;
     background: rgba(255,255,255,0.85);
+    font-family: "Poppins", sans-serif;
   }
+
+  textarea { resize: vertical; min-height: 80px; }
 
   button {
     width: 100%;
@@ -65,14 +68,13 @@
     font-weight: 700;
     cursor: pointer;
     transition: 0.18s;
+    margin-bottom: 10px;
   }
 
-  button:hover {
-    background: #ffbf00;
-  }
+  button:hover { background: #ffbf00; }
 
-  #msg {
-    margin-top: 16px;
+  #msg, #contactMsg {
+    margin-top: 12px;
     font-weight: 600;
     min-height: 22px;
   }
@@ -81,10 +83,29 @@
   .success { color: #b0ffb6; }
 
   .console-tip {
-    margin-top: 25px;
+    margin-top: 18px;
     font-size: 13px;
     opacity: 0.7;
   }
+
+  .contact-section {
+    margin-top: 25px;
+    background: rgba(255,255,255,0.08);
+    padding: 18px;
+    border-radius: 12px;
+    backdrop-filter: blur(8px);
+  }
+
+  .contact-section a {
+    color: #ffd200;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .contact-section a:hover {
+    text-decoration: underline;
+  }
+
 </style>
 
 </head>
@@ -101,10 +122,23 @@
   <div class="console-tip">
     Type <b>logout()</b> in the console to log out.
   </div>
+
+  <!-- Contact Section -->
+
+  <div class="contact-section">
+    <h2>Contact</h2>
+    <textarea id="contactMessage" placeholder="Write your message here..."></textarea>
+    <button id="contactSubmit">Send Message</button>
+    <div id="contactMsg"></div>
+    <p>Or contact directly: <br>
+       <a href="tel:+17053038374">(705) 303-8374</a> | 
+       <a href="mailto:jhwmelhuish@gmail.com">jhwmelhuish@gmail.com</a>
+    </p>
+  </div>
 </div>
 
 <script type="module">
-import { verifyCode, markCodeUsed } from '/supabase.js';
+import { submitBugReport } from '/supabase.js';
 
 // Auto redirect if already logged in
 if (localStorage.getItem('authCodeValid') === '1') {
@@ -130,7 +164,6 @@ document.getElementById("submit").onclick = async () => {
 
   await markCodeUsed(code);
 
-  // Save login session
   localStorage.setItem("authCodeValid", "1");
 
   msg.textContent = "✅ Code accepted! Redirecting...";
@@ -139,7 +172,29 @@ document.getElementById("submit").onclick = async () => {
   setTimeout(() => location.href = "index.html", 900);
 };
 
-// Full logout command usable from browser console
+document.getElementById('contactSubmit').onclick = async () => {
+  const textarea = document.getElementById('contactMessage');
+  const contactMsg = document.getElementById('contactMsg');
+  const message = textarea.value.trim();
+
+  contactMsg.textContent = '';
+  contactMsg.className = '';
+
+  if (!message) return;
+
+  try {
+    await submitBugReport({ name: 'Visitor', type: 'Contact', description: message });
+    contactMsg.textContent = "✅ Message sent successfully!";
+    contactMsg.className = "success";
+    textarea.value = '';
+  } catch (err) {
+    contactMsg.textContent = "❌ Failed to send message.";
+    contactMsg.className = "error";
+    console.error(err);
+  }
+};
+
+// Full logout command usable from console
 window.logout = () => {
   localStorage.removeItem("authCodeValid");
   console.log("%cLogged out successfully.", "color: lime; font-size: 14px;");
