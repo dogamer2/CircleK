@@ -441,11 +441,9 @@
                 updateLocalStorage(newCount, newTotalSaved);
 
                 console.log('Item redeemed successfully via Supabase. Price:', price, 'New Total Saved:', newTotalSaved);
-                showNotification(`✓ Item redeemed successfully! Saved $${price.toFixed(2)}`, 'success');
 
             } catch (error) {
                 console.error('Supabase update failed, falling back to localStorage:', error);
-                showNotification('⚠ API unavailable, data tracked locally!', 'warning');
                 
                 // Fallback: Increment both local redemption count and local total saved.
                 const currentCount = parseInt(localStorage.getItem(redemptionKey) || '0');
