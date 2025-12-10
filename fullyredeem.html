@@ -409,7 +409,12 @@ async function getPrice(itemName) {
         async function trackRedeemedItem(product) {
             console.log('Tracking redeemed item:', product);
             
-            const price = prices[product] || 0;
+            const price = await getPrice(product);
+if (price === null) {
+    showNotification('Failed to fetch product price', 'error');
+    return;
+}
+
             const redemptionKey = `redemptionCount_${product}`;
             
             // --- LocalStorage Logic (Used for fallback) ---
