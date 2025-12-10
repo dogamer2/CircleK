@@ -1,7 +1,84 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel</title>
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    background: #f5f5f5;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+  }
+
+h1 {
+text-align: center;
+margin-bottom: 25px;
+}
+
+section {
+background: white;
+padding: 20px;
+border-radius: 12px;
+margin-bottom: 25px;
+box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+button {
+padding: 10px 15px;
+border: none;
+border-radius: 8px;
+cursor: pointer;
+font-weight: 600;
+background: #c8252b;
+color: white;
+margin-top: 10px;
+}
+
+button:hover { background: #a61b22; }
+
+input[type="number"] {
+width: 80px;
+padding: 5px;
+margin-left: 5px;
+}
+
+.item-row {
+display: flex;
+justify-content: space-between;
+margin-bottom: 10px;
+align-items: center;
+}
+
+.codes div {
+margin-bottom: 5px;
+} </style>
+
+</head>
+<body>
+
+<h1>Admin Panel</h1>
+
+<section>
+  <h2>Access Codes</h2>
+  <div class="codes" id="codes"></div>
+  <button id="newCode">Generate New Code</button>
+</section>
+
+<section>
+  <h2>Item Prices</h2>
+  <div id="products"></div>
+  <button id="refreshProducts">Refresh List</button>
+</section>
+
 <script type="module">
 import { supabase, generateCode } from './supabase.js';
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+
   // ---------- PASSWORD PROTECTION ----------
   const password = prompt("Enter admin password:");
   if (!password || password !== "3723") {
@@ -10,38 +87,36 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ---------- ACCESS CODES ----------
-  const codesContainer = document.getElementById('codes');
-  const newCodeBtn = document.getElementById('newCode');
-
   async function loadCodes() {
     const { data, error } = await supabase
       .from('access_codes')
       .select('*')
       .order('created_at', { ascending: false });
 
+    const container = document.getElementById('codes');
     if (error) {
-      codesContainer.innerHTML = "<div style='color:red'>Error loading codes</div>";
+      container.innerHTML = "<div style='color:red'>Error loading codes</div>";
       console.error(error);
       return;
     }
 
-    codesContainer.innerHTML = data.map(c => `<div>${c.code} — ${c.used ? 'USED' : 'UNUSED'}</div>`).join('');
+    container.innerHTML = data.map(c => `<div>${c.code} — ${c.used ? 'USED' : 'UNUSED'}</div>`).join('');
   }
 
-  newCodeBtn.onclick = async () => {
+  async function generateNewCode() {
     const code = crypto.randomUUID().slice(0,8).toUpperCase();
     await generateCode(code);
     loadCodes();
-  };
+  }
 
+  const newCodeBtn = document.getElementById('newCode');
+  newCodeBtn.onclick = generateNewCode;
   loadCodes();
 
   // ---------- PRODUCTS / PRICES ----------
-  const productsContainer = document.getElementById('products');
-  const refreshBtn = document.getElementById('refreshProducts');
-
   async function loadProducts() {
-    productsContainer.innerHTML = "";
+    const container = document.getElementById('products');
+    container.innerHTML = "";
 
     try {
       const { data, error } = await supabase
@@ -51,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (error) throw error;
       if (!data || data.length === 0) {
-        productsContainer.innerHTML = "<div>No products found</div>";
+        container.innerHTML = "<div>No products found</div>";
         return;
       }
 
@@ -87,16 +162,21 @@ document.addEventListener("DOMContentLoaded", () => {
           alert('Price updated!');
         };
 
-        productsContainer.appendChild(row);
+        container.appendChild(row);
       });
 
     } catch (err) {
       console.error(err);
-      productsContainer.innerHTML = "<div style='color:red'>Error loading products — make sure the table exists and columns are correct.</div>";
+      container.innerHTML = "<div style='color:red'>Error loading products — make sure the table exists and columns are correct.</div>";
     }
   }
 
-  refreshBtn.onclick = loadProducts;
+  const refreshProductsBtn = document.getElementById('refreshProducts');
+  refreshProductsBtn.onclick = loadProducts;
   loadProducts();
+
 });
 </script>
+
+</body>
+</html>
