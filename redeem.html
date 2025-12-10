@@ -1,7 +1,16 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <script src="/auth.js" type="module"></script>
+  <script>
+  // Immediately check auth before anything renders
+  if (!localStorage.getItem('authCodeValid')) {
+    // Stop page rendering
+    document.documentElement.style.display = 'none';
+    // Redirect immediately
+    window.location.replace("/login.html");
+  }
+</script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Redeem Prize</title>
