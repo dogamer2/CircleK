@@ -353,14 +353,23 @@
         };
 
         // Product prices
-        const prices = {
-            chips: 4.99,
-            candy: 3.49,
-            alani: 5.99,
-            arizona: 2.99,
-            froster: 3.99,
-            beverage: 2.49
-        };
+import { supabase } from './supabase.js';
+
+async function getPrice(itemName) {
+    const { data, error } = await supabase
+        .from('products')
+        .select('price')
+        .eq('name', itemName)
+        .single();
+
+    if (error) {
+        console.error("Error fetching price:", error);
+        return null;
+    }
+
+    return data.price;
+}
+
 
         // Set the barcode code for the current product
         const val = productCodes[product] || '000000000000';
