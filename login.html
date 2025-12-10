@@ -1,13 +1,102 @@
-<input id="accessCode" placeholder="Enter access code">
-<button id="submit">Enter</button>
-<div id="msg"></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Access Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+  body {
+    margin: 0;
+    background: radial-gradient(circle at top, #c8252b, #8d0b11);
+    font-family: "Poppins", sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    color: white;
+  }
+
+  .login-box {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 18px;
+    padding: 35px;
+    width: 90%;
+    max-width: 360px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+
+  h1 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+
+  button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: #ffd200;
+    color: #000;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  button:hover {
+    background: #ffbf00;
+  }
+
+  #msg {
+    margin-top: 15px;
+    font-weight: 600;
+    min-height: 22px;
+  }
+
+  .error { color: #ffb3b3; }
+  .success { color: #b0ffb6; }
+</style>
+</head>
+<body>
+
+<div class="login-box">
+  <h1>Enter Access Code</h1>
+
+  <input id="accessCode" placeholder="Enter access code">
+  <button id="submit">Enter</button>
+
+  <div id="msg"></div>
+</div>
 
 <script type="module">
 import { verifyCode, markCodeUsed } from '/supabase.js';
 
-document.getElementById('submit').onclick = async () => {
-  const code = document.getElementById('accessCode').value.trim();
-  const msg = document.getElementById('msg');
+// Auto redirect if already logged in
+if (localStorage.getItem('authCodeValid') === '1') {
+  location.href = "index.html";
+}
+
+document.getElementById("submit").onclick = async () => {
+  const code = document.getElementById("accessCode").value.trim();
+  const msg = document.getElementById("msg");
+
+  msg.textContent = "";
+  msg.className = "";
 
   if (!code) return;
 
@@ -15,15 +104,28 @@ document.getElementById('submit').onclick = async () => {
 
   if (!valid) {
     msg.textContent = "❌ Invalid or used code";
+    msg.className = "error";
     return;
   }
 
   await markCodeUsed(code);
 
   // Remember login
-  localStorage.setItem('authCodeValid', '1');
+  localStorage.setItem("authCodeValid", "1");
 
   msg.textContent = "✅ Code accepted! Redirecting...";
-  setTimeout(() => location.href = 'index.html', 1000);
+  msg.className = "success";
+
+  setTimeout(() => location.href = "index.html", 800);
+};
+
+// Global logout() command in console
+window.logout = () => {
+  localStorage.removeItem("authCodeValid");
+  console.log("Logged out successfully.");
+  location.reload();
 };
 </script>
+
+</body>
+</html>
