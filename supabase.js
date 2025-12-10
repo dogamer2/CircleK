@@ -111,7 +111,7 @@ try {
 const { data, error } = await supabase
 .from('status_reports')
 .select('*')
-.order('timestamp', { ascending: false })
+.order('created_at', { ascending: false })
 .limit(1)
 .single();
 if (error && error.code !== 'PGRST116') throw error;
