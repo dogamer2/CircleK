@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -170,6 +171,7 @@
 </div>
 
 <script type="module">
+import { supabase } from '/supabase.js';
 import { verifyCode, markCodeUsed, submitBugReport } from '/supabase.js';
 
 // Auto redirect if logged in
