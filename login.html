@@ -6,195 +6,214 @@
 <title>Access Login</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- Google Fonts -->
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
+  :root {
+    --primary-red: #d92d34;
+    --deep-red: #8a0d11;
+    --accent-yellow: #ffd200;
+    --bg-blur: rgba(255,255,255,0.1);
+    --card-bg: rgba(255,255,255,0.15);
+    --shadow: 0 12px 36px rgba(0,0,0,0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    margin: 0;
-    background: radial-gradient(circle at top, #d92d34 0%, #8a0d11 80%);
-    font-family: "Poppins", sans-serif;
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    background: radial-gradient(circle at top, var(--primary-red) 0%, var(--deep-red) 80%);
     display: flex;
-    align-items: center;
     justify-content: center;
-    height: 100vh;
-    color: white;
+    align-items: center;
     padding: 20px;
+    color: #fff;
   }
 
-  .login-box {
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(12px);
-    border-radius: 18px;
-    padding: 35px 30px;
+  .login-container {
     width: 100%;
-    max-width: 400px;
-    box-shadow: 0 10px 45px rgba(0,0,0,0.35);
+    max-width: 420px;
+    background: var(--card-bg);
+    backdrop-filter: blur(16px);
+    border-radius: 24px;
+    padding: 40px 30px;
+    box-shadow: var(--shadow);
+    animation: slideFade 0.6s ease-out;
+  }
+
+  @keyframes slideFade {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  h1 {
+    font-size: 30px;
+    margin-bottom: 25px;
     text-align: center;
-    animation: fadeIn 0.6s ease-out;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0px); }
-  }
-
-  h1, h2 {
-    margin-top: 0;
-    margin-bottom: 18px;
-    font-size: 26px;
-    letter-spacing: 0.4px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #fff;
   }
 
   input, textarea {
     width: 100%;
-    padding: 12px;
-    border-radius: 10px;
+    padding: 14px 16px;
+    border-radius: 12px;
     border: none;
     outline: none;
     font-size: 16px;
-    margin-bottom: 14px;
-    background: rgba(255,255,255,0.85);
-    font-family: "Poppins", sans-serif;
+    margin-bottom: 16px;
+    font-family: 'Poppins', sans-serif;
+    background: rgba(255,255,255,0.9);
   }
 
-  textarea { resize: vertical; min-height: 80px; }
+  textarea { resize: vertical; min-height: 90px; }
 
   button {
     width: 100%;
     padding: 14px;
     border: none;
-    border-radius: 10px;
-    background: #ffd200;
+    border-radius: 12px;
+    background: var(--accent-yellow);
     color: #000;
     font-size: 17px;
     font-weight: 700;
     cursor: pointer;
-    transition: 0.18s;
-    margin-bottom: 10px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
   }
 
-  button:hover { background: #ffbf00; }
+  button:hover {
+    background: #ffc400;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.28);
+  }
 
   #msg, #contactMsg {
     margin-top: 12px;
-    font-weight: 600;
     min-height: 22px;
+    font-weight: 600;
+    text-align: center;
   }
 
-  .error { color: #ffb3b3; }
+  .error { color: #ff7b7b; }
   .success { color: #b0ffb6; }
 
   .console-tip {
-    margin-top: 18px;
     font-size: 13px;
     opacity: 0.7;
+    margin-top: 18px;
+    text-align: center;
   }
 
   .contact-section {
-    margin-top: 25px;
-    background: rgba(255,255,255,0.08);
-    padding: 18px;
-    border-radius: 12px;
-    backdrop-filter: blur(8px);
+    margin-top: 30px;
+    background: var(--bg-blur);
+    padding: 20px;
+    border-radius: 18px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+    position: relative;
+  }
+
+  .contact-section h2 {
+    font-size: 22px;
+    margin-bottom: 16px;
+    font-weight: 700;
+    color: #fff;
+    text-align: center;
   }
 
   .contact-section a {
-    color: #ffd200;
+    color: var(--accent-yellow);
     text-decoration: none;
     font-weight: 600;
+    transition: all 0.2s ease;
   }
 
-  .contact-section a:hover {
-    text-decoration: underline;
-  }
+  .contact-section a:hover { text-decoration: underline; }
 
+  .contact-section p { text-align: center; font-size: 14px; margin-top: 14px; line-height: 1.4; }
+
+  .icon {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 18px;
+  }
 </style>
 
 </head>
 
 <body>
-<div class="login-box">
+<div class="login-container">
   <h1>Enter Access Code</h1>
-
   <input id="accessCode" placeholder="Enter access code">
-  <button id="submit">Enter</button>
-
+  <button id="submit"><span class="icon">🔑</span>Enter</button>
   <div id="msg"></div>
-
-  <div class="console-tip">
-    Type <b>logout()</b> in the console to log out.
-  </div>
-
-  <!-- Contact Section -->
+  <div class="console-tip">Type <b>logout()</b> in the console to log out.</div>
 
   <div class="contact-section">
-    <h2>Contact</h2>
+    <h2>Contact Us</h2>
     <textarea id="contactMessage" placeholder="Write your message here..."></textarea>
-    <button id="contactSubmit">Send Message</button>
+    <button id="contactSubmit"><span class="icon">📩</span>Send Message</button>
     <div id="contactMsg"></div>
-    <p>Or contact directly: <br>
-       <a href="tel:+17053038374">(705) 303-8374</a> | 
-       <a href="mailto:jhwmelhuish@gmail.com">jhwmelhuish@gmail.com</a>
+    <p>Or reach out directly:<br>
+      <a href="tel:+17053038374">📞 (705) 303-8374</a> | 
+      <a href="mailto:jhwmelhuish@gmail.com">✉️ jhwmelhuish@gmail.com</a>
     </p>
   </div>
 </div>
 
 <script type="module">
-import { submitBugReport } from '/supabase.js';
+import { verifyCode, markCodeUsed, submitBugReport } from '/supabase.js';
 
-// Auto redirect if already logged in
-if (localStorage.getItem('authCodeValid') === '1') {
-  location.href = "index.html";
-}
+// Auto redirect if logged in
+if (localStorage.getItem('authCodeValid') === '1') location.href = "index.html";
 
+// Access code submit
 document.getElementById("submit").onclick = async () => {
   const code = document.getElementById("accessCode").value.trim();
   const msg = document.getElementById("msg");
-
-  msg.textContent = "";
-  msg.className = "";
+  msg.textContent = ''; msg.className = '';
 
   if (!code) return;
 
   const valid = await verifyCode(code);
-
   if (!valid) {
-    msg.textContent = "❌ Invalid or used code";
-    msg.className = "error";
-    return;
+    msg.textContent = "❌ Invalid or used code"; msg.className = "error"; return;
   }
 
   await markCodeUsed(code);
-
   localStorage.setItem("authCodeValid", "1");
-
-  msg.textContent = "✅ Code accepted! Redirecting...";
-  msg.className = "success";
-
+  msg.textContent = "✅ Code accepted! Redirecting..."; msg.className = "success";
   setTimeout(() => location.href = "index.html", 900);
 };
 
+// Contact submit
 document.getElementById('contactSubmit').onclick = async () => {
+  const msgBox = document.getElementById('contactMsg');
   const textarea = document.getElementById('contactMessage');
-  const contactMsg = document.getElementById('contactMsg');
   const message = textarea.value.trim();
-
-  contactMsg.textContent = '';
-  contactMsg.className = '';
+  msgBox.textContent = ''; msgBox.className = '';
 
   if (!message) return;
 
   try {
     await submitBugReport({ name: 'Visitor', type: 'Contact', description: message });
-    contactMsg.textContent = "✅ Message sent successfully!";
-    contactMsg.className = "success";
+    msgBox.textContent = "✅ Message sent successfully!"; msgBox.className = "success";
     textarea.value = '';
   } catch (err) {
-    contactMsg.textContent = "❌ Failed to send message.";
-    contactMsg.className = "error";
+    msgBox.textContent = "❌ Failed to send message."; msgBox.className = "error";
     console.error(err);
   }
 };
 
-// Full logout command usable from console
+// Full logout for console
 window.logout = () => {
   localStorage.removeItem("authCodeValid");
   console.log("%cLogged out successfully.", "color: lime; font-size: 14px;");
