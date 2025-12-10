@@ -120,20 +120,38 @@ export async function fetchLatestStatus() {
       .single();
 
     if (error && error.code !== "PGRST116") throw error;
-    return data || null;
+    if (!data) return null;
+
+    // Convert Supabase UTC timestamp → local timezone
+    const d = new Date(data.created_at);
+
+    // iPhone-safe formatting
+    const formattedDate =
+      `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")} ` +
+      `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+
+    return {
+      ...data,
+      created_at: formattedDate
+    };
+
   } catch (err) {
     console.error("fetchLatestStatus error:", err);
+
     const lastChange = localStorage.getItem("lastStatusChange");
     const circleKWorking = localStorage.getItem("circleKWorking");
+
     if (lastChange) {
       return {
         status: circleKWorking === "false" ? "not working" : "working",
         created_at: lastChange
       };
     }
+
     return null;
   }
 }
+
 
 // ---------- SUBSCRIPTIONS ----------
 export function subscribeToTotals(callback) {
