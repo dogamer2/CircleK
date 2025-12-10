@@ -1,90 +1,12 @@
-<!doctype html>
-
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Panel</title>
-<style>
-  body {
-    font-family: "Poppins", sans-serif;
-    background: #f5f5f5;
-    margin: 0;
-    padding: 20px;
-    color: #333;
-  }
-
-h1 {
-text-align: center;
-margin-bottom: 25px;
-}
-
-section {
-background: white;
-padding: 20px;
-border-radius: 12px;
-margin-bottom: 25px;
-box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-}
-
-button {
-padding: 10px 15px;
-border: none;
-border-radius: 8px;
-cursor: pointer;
-font-weight: 600;
-background: #c8252b;
-color: white;
-margin-top: 10px;
-}
-
-button:hover { background: #a61b22; }
-
-input[type="number"] {
-width: 80px;
-padding: 5px;
-margin-left: 5px;
-}
-
-.item-row {
-display: flex;
-justify-content: space-between;
-margin-bottom: 10px;
-align-items: center;
-}
-
-.codes div {
-margin-bottom: 5px;
-}
-
-</style>
-</head>
-<body>
-<script>
-  // Password protection
-  const password = prompt("Enter admin password:");
-  if (password !== "3723") {
-    document.body.innerHTML = "<h2>Access Denied</h2>";
-    throw new Error("Access denied");
-  }
-</script>
-
-<h1>Admin Panel</h1>
-
-<section>
-  <h2>Access Codes</h2>
-  <div class="codes" id="codes"></div>
-  <button id="newCode">Generate New Code</button>
-</section>
-
-<section>
-  <h2>Item Prices</h2>
-  <div id="products"></div>
-  <button id="refreshProducts">Refresh List</button>
-</section>
-
 <script type="module">
 import { supabase, generateCode } from './supabase.js';
+
+// ---------- PASSWORD PROTECTION ----------
+const password = prompt("Enter admin password:");
+if (!password || password !== "3723") {
+  document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;'>Access Denied</h2>";
+  throw new Error("Access denied");
+}
 
 // ---------- ACCESS CODES ----------
 async function loadCodes() {
@@ -93,17 +15,15 @@ async function loadCodes() {
     .select('*')
     .order('created_at', { ascending: false });
 
+  const container = document.getElementById('codes');
   if (error) {
-    document.getElementById('codes').innerHTML = 'Error loading codes';
+    container.innerHTML = "<div style='color:red'>Error loading codes</div>";
     console.error(error);
     return;
   }
 
-  document.getElementById('codes').innerHTML =
-    data.map(c => `<div>${c.code} — ${c.used ? 'USED' : 'UNUSED'}</div>`).join('');
+  container.innerHTML = data.map(c => `<div>${c.code} — ${c.used ? 'USED' : 'UNUSED'}</div>`).join('');
 }
-
-loadCodes();
 
 document.getElementById('newCode').onclick = async () => {
   const code = crypto.randomUUID().slice(0,8).toUpperCase();
@@ -111,56 +31,66 @@ document.getElementById('newCode').onclick = async () => {
   loadCodes();
 };
 
+loadCodes();
+
 // ---------- PRODUCTS / PRICES ----------
 async function loadProducts() {
-  const { data, error } = await supabase
-    .from('products')
-    .select('*')
-    .order('name', { ascending: true });
-
-  if (error) {
-    document.getElementById('products').innerHTML = 'Error loading products';
-    console.error(error);
-    return;
-  }
-
   const container = document.getElementById('products');
-  container.innerHTML = '';
+  container.innerHTML = "";
 
-  data.forEach(item => {
-    const row = document.createElement('div');
-    row.className = 'item-row';
-    row.innerHTML = `
-      <span>${item.name}</span>
-      <span>
-        $<input type="number" value="${item.price}" step="0.01" min="0">
-        <button>Update</button>
-      </span>
-    `;
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .order('name', { ascending: true });
 
-    const input = row.querySelector('input');
-    const btn = row.querySelector('button');
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      container.innerHTML = "<div>No products found</div>";
+      return;
+    }
 
-    btn.onclick = async () => {
-      const newPrice = parseFloat(input.value);
-      if (isNaN(newPrice) || newPrice < 0) return alert('Invalid price');
+    data.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'item-row';
+      row.style.display = 'flex';
+      row.style.justifyContent = 'space-between';
+      row.style.marginBottom = '10px';
+      row.style.alignItems = 'center';
 
-      const { error } = await supabase
-        .from('products')
-        .update({ price: newPrice })
-        .eq('id', item.id);
+      row.innerHTML = `
+        <span>${item.name}</span>
+        <span>
+          $<input type="number" value="${item.price}" step="0.01" min="0">
+          <button>Update</button>
+        </span>
+      `;
 
-      if (error) return alert('Error updating price: ' + error.message);
-      alert('Price updated!');
-    };
+      const input = row.querySelector('input');
+      const btn = row.querySelector('button');
 
-    container.appendChild(row);
-  });
+      btn.onclick = async () => {
+        const newPrice = parseFloat(input.value);
+        if (isNaN(newPrice) || newPrice < 0) return alert('Invalid price');
+
+        const { error } = await supabase
+          .from('products')
+          .update({ price: newPrice })
+          .eq('id', item.id);
+
+        if (error) return alert('Error updating price: ' + error.message);
+        alert('Price updated!');
+      };
+
+      container.appendChild(row);
+    });
+
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = "<div style='color:red'>Error loading products — make sure the table exists and columns are correct.</div>";
+  }
 }
 
-loadProducts();
 document.getElementById('refreshProducts').onclick = loadProducts;
+loadProducts();
 </script>
-
-</body>
-</html>
