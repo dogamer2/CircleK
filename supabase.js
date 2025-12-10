@@ -122,12 +122,14 @@ export async function fetchLatestStatus() {
     if (error && error.code !== "PGRST116") throw error;
     if (!data) return null;
 
-    // safe date cleanup
-    const createdAt = data.created_at
-      ? data.created_at.replace("T"," ").replace("Z","")
-      : null;
+    // Parse as UTC and convert to local time
+    const d = new Date(data.created_at); 
+    const formattedDate =
+      `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ` +
+      `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 
-    return { ...data, created_at: createdAt };
+    return { ...data, created_at: formattedDate };
+
   } catch (err) {
     console.error("fetchLatestStatus error:", err);
 
@@ -140,6 +142,7 @@ export async function fetchLatestStatus() {
         created_at: lastChange
       };
     }
+
     return null;
   }
 }
