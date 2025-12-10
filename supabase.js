@@ -30,7 +30,6 @@ try {
 const current = await getTotalSaved();
 const newTotal = Number(current) + Number(amount);
 
-```
 const { error } = await supabase
   .from('totals')
   .update({ total_saved: newTotal, updated_at: new Date().toISOString() })
@@ -38,7 +37,6 @@ const { error } = await supabase
 if (error) throw error;
 
 return newTotal;
-```
 
 } catch (err) {
 console.error('addToTotal error:', err);
