@@ -195,23 +195,36 @@ document.getElementById("submit").onclick = async () => {
 };
 
 // Contact submit
+// Contact submit
 document.getElementById('contactSubmit').onclick = async () => {
   const msgBox = document.getElementById('contactMsg');
   const textarea = document.getElementById('contactMessage');
   const message = textarea.value.trim();
-  msgBox.textContent = ''; msgBox.className = '';
+  msgBox.textContent = ''; 
+  msgBox.className = '';
 
   if (!message) return;
 
   try {
-    await submitBugReport({ name: 'Visitor', type: 'Contact', description: message });
-    msgBox.textContent = "✅ Message sent successfully!"; msgBox.className = "success";
+    const { data, error } = await supabase
+      .from('contact_messages')
+      .insert([{
+        name: 'Anonymous',
+        message: message
+      }]);
+
+    if (error) throw error;
+
+    msgBox.textContent = "✅ Message sent successfully!";
+    msgBox.className = "success";
     textarea.value = '';
   } catch (err) {
-    msgBox.textContent = "❌ Failed to send message."; msgBox.className = "error";
+    msgBox.textContent = "❌ Failed to send message.";
+    msgBox.className = "error";
     console.error(err);
   }
 };
+
 
 // Full logout for console
 window.logout = () => {
