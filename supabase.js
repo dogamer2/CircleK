@@ -123,10 +123,9 @@ export async function fetchLatestStatus() {
     if (!data) return null;
 
     // Parse as UTC and convert to local time
-    const d = new Date(data.created_at); 
-    const formattedDate =
-      `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ` +
-      `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+const d = new Date(data.created_at);
+const formatted = `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+
 
     return { ...data, created_at: formattedDate };
 
