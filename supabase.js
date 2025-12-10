@@ -123,7 +123,7 @@ export async function fetchLatestStatus() {
     if (!data) return null;
 
     // Convert Supabase UTC timestamp → local timezone
-    const d = new Date(data.created_at);
+    const d = new Date(data.timestamp.replace(" ", "T"));
 
     // iPhone-safe formatting
     const formattedDate =
