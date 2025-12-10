@@ -121,7 +121,7 @@ console.error('fetchLatestStatus error:', err);
 const lastChange = localStorage.getItem('lastStatusChange');
 const circleKWorking = localStorage.getItem('circleKWorking');
 if (lastChange) {
-return { status: circleKWorking === 'false' ? 'not working' : 'working', timestamp: lastChange };
+return { status: circleKWorking === 'false' ? 'not working' : 'working', created_at: lastChange };
 }
 return null;
 }
