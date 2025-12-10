@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -8,31 +9,38 @@
 <style>
   body {
     margin: 0;
-    background: radial-gradient(circle at top, #c8252b, #8d0b11);
+    background: radial-gradient(circle at top, #d92d34 0%, #8a0d11 80%);
     font-family: "Poppins", sans-serif;
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100vh;
     color: white;
+    padding: 20px;
   }
 
   .login-box {
-    background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
     border-radius: 18px;
-    padding: 35px;
-    width: 90%;
+    padding: 35px 30px;
+    width: 100%;
     max-width: 360px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 45px rgba(0,0,0,0.35);
     text-align: center;
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0px); }
   }
 
   h1 {
     margin-top: 0;
-    margin-bottom: 20px;
+    margin-bottom: 22px;
     font-size: 28px;
-    font-weight: 700;
+    letter-spacing: 0.4px;
   }
 
   input {
@@ -42,7 +50,8 @@
     border: none;
     outline: none;
     font-size: 16px;
-    margin-bottom: 15px;
+    margin-bottom: 18px;
+    background: rgba(255,255,255,0.85);
   }
 
   button {
@@ -55,7 +64,7 @@
     font-size: 17px;
     font-weight: 700;
     cursor: pointer;
-    transition: 0.2s;
+    transition: 0.18s;
   }
 
   button:hover {
@@ -63,17 +72,24 @@
   }
 
   #msg {
-    margin-top: 15px;
+    margin-top: 16px;
     font-weight: 600;
     min-height: 22px;
   }
 
   .error { color: #ffb3b3; }
   .success { color: #b0ffb6; }
-</style>
-</head>
-<body>
 
+  .console-tip {
+    margin-top: 25px;
+    font-size: 13px;
+    opacity: 0.7;
+  }
+</style>
+
+</head>
+
+<body>
 <div class="login-box">
   <h1>Enter Access Code</h1>
 
@@ -81,6 +97,10 @@
   <button id="submit">Enter</button>
 
   <div id="msg"></div>
+
+  <div class="console-tip">
+    Type <b>logout()</b> in the console to log out.
+  </div>
 </div>
 
 <script type="module">
@@ -110,19 +130,19 @@ document.getElementById("submit").onclick = async () => {
 
   await markCodeUsed(code);
 
-  // Remember login
+  // Save login session
   localStorage.setItem("authCodeValid", "1");
 
   msg.textContent = "✅ Code accepted! Redirecting...";
   msg.className = "success";
 
-  setTimeout(() => location.href = "index.html", 800);
+  setTimeout(() => location.href = "index.html", 900);
 };
 
-// Global logout() command in console
+// Full logout command usable from browser console
 window.logout = () => {
   localStorage.removeItem("authCodeValid");
-  console.log("Logged out successfully.");
+  console.log("%cLogged out successfully.", "color: lime; font-size: 14px;");
   location.reload();
 };
 </script>
