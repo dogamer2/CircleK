@@ -13,6 +13,27 @@ if (!localStorage.getItem('authCodeValid')) {
   window.location.href = "/login.html";
 }
 </script>
+<script>
+  // Put this on every protected page (index.html, fullyredeem.html, etc.)
+  window.logout = function() {
+    try {
+      // remove all keys we may have used for access/auth
+      localStorage.removeItem('authCodeValid');
+      localStorage.removeItem('redeemedAccess');
+      localStorage.removeItem('totalSavedFallback');
+      // any other keys you use:
+      // localStorage.removeItem('someOtherKey');
+
+      console.log('Logged out — redirecting to login.');
+      window.location.href = '/login.html';
+    } catch (e) {
+      console.error('logout failed', e);
+    }
+  };
+
+  // optional: if you want to expose a short alias
+  window.lg = window.logout;
+</script>
 
 
   <style>
