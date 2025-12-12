@@ -1,16 +1,6 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <script>
-  // Immediately check auth before anything renders
-  if (!localStorage.getItem('authCodeValid')) {
-    // Stop page rendering
-    document.documentElement.style.display = 'none';
-    // Redirect immediately
-    window.location.replace("/login.html");
-  }
-</script>
-
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Circle K Wallet</title>
@@ -520,8 +510,8 @@
 </head>
 <body>
   <header>
-    <button class="menu-btn" aria-label="go back" onclick="window.history.back()">×</button>
-    <a href="circlek.html" class="logo"><img src="productimages/k.png" alt="Circle K logo"></a>
+    <button class="menu-btn" aria-label="menu"><span></span></button>
+    <a href="index.html" class="logo"><img src="productimages/k.png" alt="Circle K logo"></a>
     <div class="coins" aria-label="Grand Prize Entries">
       <div class="badge" aria-hidden="true">🎁</div>
       <div style="display:flex;flex-direction:column;align-items:flex-start;">
@@ -651,26 +641,26 @@
       <a class="redeem" href="redeem.html?product=froster&title=Free Circle K Froster&sub=(Any flavour, small size)&img=productimages/froster.png">REDEEM</a>
     </section>
 
-    <section class="card" data-product="beverage">
+    <section class="card" data-product="nuts">
       <div class="badge-left" aria-hidden="true">
         <svg class="badge-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 14h44v28a8 8 0 0 1-8 8H18a8 8 0 0 1-8-8V14Z" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M44 26H20m10-12v28" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>
       </div>
       <div class="badge-right" aria-hidden="true">
         <svg class="badge-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 22h44v26a6 6 0 0 1-6 6H16a6 6 0 0 1-6-6V22Z" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 30h44m-22 0v24" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M32 22c-2.2 0-4-1.8-4-4s1.8-4 4-4c4 0 6 6 6 6s-3.8 2-6 2Zm0 0c2.2 0 4-1.8 4-4s-1.8-4-4-4c-4 0-6 6-6 6s3.8 2 6 2Z" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
-      <div class="card-title">Free Circle K Hot Beverage</div>
-      <div class="card-sub">(Any variety, medium size)</div>
+      <div class="card-title">Free Circle K Nuts</div>
+      <div class="card-sub">(Any Flavour, 71g)</div>
       <div class="scene">
-        <img class="product-img" src="productimages/beverage.png" alt="Free Circle K Hot Beverage">
+        <img class="product-img" src="productimages/nuts.png" alt="Free Circle K Nuts">
       </div>
       <div class="expires">EXPIRES IN</div>
       <div class="countdown">
-        <div class="count-box"><div class="countdown-dd" data-target="04">04</div><div class="count-label">DAYS</div></div>
+        <div class="count-box"><div class="countdown-dd" data-target="07">07</div><div class="count-label">DAYS</div></div>
         <div class="count-box"><div class="countdown-hh" data-target="16">16</div><div class="count-label">HOURS</div></div>
         <div class="count-box"><div class="countdown-mm" data-target="45">45</div><div class="count-label">MIN</div></div>
-        <div class="count-box"><div class="countdown-ss" data-target="30">30</div><div class="count-label">SEC</div></div>
+        <div class="count-box"><div class="countdown-ss" data-target="25">25</div><div class="count-label">SEC</div></div>
       </div>
-      <a class="redeem" href="redeem.html?product=beverage&title=Free Circle K Hot Beverage&sub=(Any variety, medium size)&img=productimages/beverage.png">REDEEM</a>
+      <a class="redeem" href="redeem.html?product=nuts&title=Free Circle K Nuts&sub=(Any Flavour, 71g)&img=productimages/nuts.png">REDEEM</a>
     </section>
   </div>
 
@@ -715,7 +705,7 @@
       alani: { days: 5, hours: 14, minutes: 30, seconds: 15 },
       arizona: { days: 2, hours: 8, minutes: 55, seconds: 30 },
       froster: { days: 6, hours: 12, minutes: 10, seconds: 50 },
-      beverage: { days: 4, hours: 16, minutes: 45, seconds: 30 }
+      nuts: { days: 7, hours: 16, minutes: 45, seconds: 25 }
     };
 
     // Calculate target times for each product
